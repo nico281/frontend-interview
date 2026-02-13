@@ -36,7 +36,7 @@ interface TodoListProps {
     input: { name?: string; description?: string; done?: boolean },
   ) => void;
   onViewItem?: (itemId: number) => void;
-  scrollContainerRef?: React.RefObject<HTMLDivElement>;
+  scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export function TodoList({
