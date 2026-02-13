@@ -8,11 +8,11 @@ RUN npm install
 
 COPY . .
 
-# Build argument for API URL
+# Use Render environment variable if available, else default
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL}
 
-RUN npm run build
+RUN if [ -z "$VITE_API_URL" ]; then export VITE_API_URL=${VITE_API_URL:-https://todos-api-2ott.onrender.com}; fi && npm run build
 
 FROM node:20.12.0
 
