@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Pencil, X, Check } from 'lucide-react';
+import { Check, GripVertical, Pencil, X } from 'lucide-react';
 import type { TodoItem as TodoItemType } from '../types';
 
 interface TodoItemProps {
@@ -12,22 +12,15 @@ interface TodoItemProps {
 }
 
 export function TodoItem({ item, onToggle, onView, onEdit, onDelete }: TodoItemProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useSortable({
     id: item.id,
-    animateLayoutChanges: () => false
+    animateLayoutChanges: () => false,
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: isDragging ? undefined : transition,
-    opacity: isDragging ? 0.5 : 1
+    transition: isDragging ? 'none' : 'transform 50ms ease-out',
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (

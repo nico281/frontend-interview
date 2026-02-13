@@ -1,7 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { reorderItemInList } from '@/shared/utils/arrayUtils';
 import * as api from '../services/api';
-import type { CreateListInput, UpdateListInput, CreateItemInput, UpdateItemInput } from '../types';
-import { arrayMove } from '@dnd-kit/sortable';
+import type { CreateItemInput, CreateListInput, UpdateItemInput, UpdateListInput } from '../types';
+import type { TodoList as TodoListType, TodoItem as TodoItemType } from '../types';
 
 const queryKey = ['todo-lists'];
 
@@ -10,7 +11,7 @@ export function useTodoLists() {
 
   const lists = useQuery({
     queryKey,
-    queryFn: api.getTodoLists
+    queryFn: api.getTodoLists,
   });
 
   const createList = useMutation({
@@ -18,14 +19,14 @@ export function useTodoLists() {
     onMutate: async (input) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData(queryKey, (old: any) => [
+      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) => [
         ...(old || []),
-        { id: 'temp', name: input.name, todoItems: [] }
+        { id: 'temp', name: input.name, todoItems: [] },
       ]);
       return { prev };
     },
     onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev),
-    onSettled: () => queryClient.invalidateQueries({ queryKey })
+    onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const updateList = useMutation({
@@ -33,13 +34,13 @@ export function useTodoLists() {
     onMutate: async ({ id, input }) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData(queryKey, (old: any) =>
-        old?.map((list: any) => list.id === id ? { ...list, ...input } : list)
+      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
+        old?.map((list: TodoListType) => (list.id === id ? { ...list, ...input } : list)),
       );
       return { prev };
     },
     onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev),
-    onSettled: () => queryClient.invalidateQueries({ queryKey })
+    onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const deleteList = useMutation({
@@ -47,16 +48,18 @@ export function useTodoLists() {
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData(queryKey, (old: any) => old?.filter((l: any) => l.id !== id));
+      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
+        old?.filter((l: TodoListType) => l.id !== id),
+      );
       return { prev };
     },
     onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev),
-    onSettled: () => queryClient.invalidateQueries({ queryKey })
+    onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const createItem = useMutation({
     mutationFn: ({ listId, input }: { listId: number; input: CreateItemInput }) => api.createTodoItem(listId, input),
-    onSettled: () => queryClient.invalidateQueries({ queryKey })
+    onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const updateItem = useMutation({
@@ -65,22 +68,22 @@ export function useTodoLists() {
     onMutate: async ({ listId, itemId, input }) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData(queryKey, (old: any) =>
-        old?.map((list: any) =>
+      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
+        old?.map((list: TodoListType) =>
           list.id === listId
             ? {
                 ...list,
-                todoItems: list.todoItems.map((item: any) =>
-                  item.id === itemId ? { ...item, ...input } : item
-                )
+                todoItems: list.todoItems.map((item: TodoItemType) =>
+                  item.id === itemId ? { ...item, ...input } : item,
+                ),
               }
-            : list
-        )
+            : list,
+        ),
       );
       return { prev };
     },
     onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev),
-    onSettled: () => queryClient.invalidateQueries({ queryKey })
+    onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const deleteItem = useMutation({
@@ -88,37 +91,35 @@ export function useTodoLists() {
     onMutate: async ({ listId, itemId }) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData(queryKey, (old: any) =>
-        old?.map((list: any) =>
+      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
+        old?.map((list: TodoListType) =>
           list.id === listId
-            ? { ...list, todoItems: list.todoItems.filter((i: any) => i.id !== itemId) }
-            : list
-        )
+            ? {
+                ...list,
+                todoItems: list.todoItems.filter((i: TodoItemType) => i.id !== itemId),
+              }
+            : list,
+        ),
       );
       return { prev };
     },
-    onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev)
+    onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev),
   });
 
   const reorderItem = useMutation({
     mutationFn: ({ listId, itemId, newOrder }: { listId: number; itemId: number; newOrder: number }) =>
       api.reorderItem(listId, itemId, newOrder),
-    onMutate: async ({ listId, itemId, newOrder }) => {
-      await queryClient.cancelQueries({ queryKey });
+    onMutate: ({ listId, itemId, newOrder }) => {
+      queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData(queryKey, (old: any) =>
-        old?.map((list: any) => {
-          if (list.id !== listId) return list;
-          const oldIndex = list.todoItems.findIndex((i: any) => i.id === itemId);
-          return {
-            ...list,
-            todoItems: arrayMove(list.todoItems, oldIndex, newOrder)
-          };
-        })
+      // Update optimistically
+      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
+        reorderItemInList(old, listId, itemId, newOrder),
       );
       return { prev };
     },
-    onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev)
+    // Don't invalidate - we keep optimistic state
+    onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev),
   });
 
   return {
@@ -129,6 +130,6 @@ export function useTodoLists() {
     createItem,
     updateItem,
     deleteItem,
-    reorderItem
+    reorderItem,
   };
 }

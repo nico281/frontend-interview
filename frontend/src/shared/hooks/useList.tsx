@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 
 export default function useList<T = unknown>(defaultList: T[] = []) {
   const [list, setList] = useState(defaultList);

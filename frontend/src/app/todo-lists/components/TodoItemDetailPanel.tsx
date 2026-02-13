@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import type { TodoItem as TodoItemType } from '../types';
-import { useState, useEffect } from 'react';
 
 interface TodoItemDetailPanelProps {
   item: TodoItemType | null;
@@ -10,17 +10,9 @@ interface TodoItemDetailPanelProps {
 }
 
 export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemDetailPanelProps) {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState(item?.name || '');
+  const [description, setDescription] = useState(item?.description || '');
   const [isClosing, setIsClosing] = useState(false);
-
-  useEffect(() => {
-    if (item) {
-      setName(item.name);
-      setDescription(item.description || '');
-      setIsClosing(false);
-    }
-  }, [item]);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -39,7 +31,7 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
     setTimeout(onClose, 300);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (mode === 'edit') {
       onUpdate(item.id, { name, description: description || undefined });
@@ -67,11 +59,7 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
           <h2 id="panel-title" className="text-lg font-semibold text-neutral-900">
             {isViewMode ? 'Task Details' : 'Edit Task'}
           </h2>
-          <button
-            onClick={handleClose}
-            className="text-neutral-400 hover:text-neutral-900"
-            aria-label="Close panel"
-          >
+          <button onClick={handleClose} className="text-neutral-400 hover:text-neutral-900" aria-label="Close panel">
             <X size={20} />
           </button>
         </div>
@@ -90,9 +78,7 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
               </div>
             )}
 
-            {!item.description && (
-              <p className="text-neutral-400 italic">No description</p>
-            )}
+            {!item.description && <p className="text-neutral-400 italic">No description</p>}
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">

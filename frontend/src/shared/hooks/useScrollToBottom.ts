@@ -1,6 +1,6 @@
-import { RefObject } from 'react';
+import type { RefObject } from 'react';
 
-export function scrollToBottom(containerRef: RefObject<HTMLDivElement>) {
+export function scrollToBottom(containerRef: RefObject<HTMLDivElement | null>) {
   const container = containerRef.current;
   if (container) {
     setTimeout(() => {

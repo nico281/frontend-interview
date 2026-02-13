@@ -1,30 +1,21 @@
-import { useState, useRef } from "react";
-import { Plus } from "lucide-react";
-import { TodoList } from "./components/TodoList";
-import { useTodoLists } from "./hooks/useTodoLists";
-import { scrollToBottom } from "@/shared/hooks/useScrollToBottom";
-import { ConfirmModal } from "@/shared/components/ConfirmModal";
+import { Plus } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { ConfirmModal } from '@/shared/components/ConfirmModal';
+import { scrollToBottom } from '@/shared/hooks/useScrollToBottom';
+import { TodoList } from './components/TodoList';
+import { useTodoLists } from './hooks/useTodoLists';
 
 export default function TodoListsApp() {
-  const {
-    lists,
-    createList,
-    deleteList,
-    updateList,
-    createItem,
-    updateItem,
-    deleteItem,
-    reorderItem,
-  } = useTodoLists();
-  const [newListName, setNewListName] = useState("");
+  const { lists, createList, deleteList, updateList, createItem, updateItem, deleteItem, reorderItem } = useTodoLists();
+  const [newListName, setNewListName] = useState('');
   const [deleteConfirmList, setDeleteConfirmList] = useState<number | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const handleCreateList = (e: React.FormEvent) => {
+  const handleCreateList = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newListName.trim()) {
       createList.mutate({ name: newListName.trim() });
-      setNewListName("");
+      setNewListName('');
       scrollToBottom(scrollContainerRef);
     }
   };
@@ -62,9 +53,7 @@ export default function TodoListsApp() {
           {lists.isLoading ? (
             <p>Loading...</p>
           ) : lists.error ? (
-            <p className="text-red-600">
-              Error: {(lists.error as Error).message}
-            </p>
+            <p className="text-red-600">Error: {(lists.error as Error).message}</p>
           ) : (
             <div className="space-y-4">
               {lists.data?.map((list) => (
@@ -72,13 +61,9 @@ export default function TodoListsApp() {
                   key={list.id}
                   list={list}
                   scrollContainerRef={scrollContainerRef}
-                  onUpdateList={(name) =>
-                    updateList.mutate({ id: list.id, input: { name } })
-                  }
+                  onUpdateList={(name) => updateList.mutate({ id: list.id, input: { name } })}
                   onDeleteList={() => setDeleteConfirmList(list.id)}
-                  onCreateItem={(name) =>
-                    createItem.mutate({ listId: list.id, input: { name } })
-                  }
+                  onCreateItem={(name) => createItem.mutate({ listId: list.id, input: { name } })}
                   onToggleItem={(itemId) => {
                     const item = list.todoItems.find((i) => i.id === itemId);
                     updateItem.mutate({
@@ -87,19 +72,11 @@ export default function TodoListsApp() {
                       input: { done: !item?.done },
                     });
                   }}
-                  onEditItem={() => {
-                    /* TODO: open edit modal */
-                  }}
                   onDeleteItem={(itemId) => {
-                    const item = list.todoItems.find((i) => i.id === itemId);
-                    deleteItem.mutate({ listId: list.id, itemId, item });
+                    deleteItem.mutate({ listId: list.id, itemId });
                   }}
-                  onReorderItem={(itemId, newOrder) =>
-                    reorderItem.mutate({ listId: list.id, itemId, newOrder })
-                  }
-                  onUpdateItem={(itemId, input) =>
-                    updateItem.mutate({ listId: list.id, itemId, input })
-                  }
+                  onReorderItem={(itemId, newOrder) => reorderItem.mutate({ listId: list.id, itemId, newOrder })}
+                  onUpdateItem={(itemId, input) => updateItem.mutate({ listId: list.id, itemId, input })}
                 />
               ))}
             </div>

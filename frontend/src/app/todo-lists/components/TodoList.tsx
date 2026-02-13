@@ -1,14 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { ClipboardList, Edit, Trash2, Plus } from 'lucide-react';
-import type { TodoList as TodoListType, TodoItem as TodoItemType } from '../types';
+import { ClipboardList, Edit, Plus, Trash2 } from 'lucide-react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
+import { ConfirmModal } from '@/shared/components/ConfirmModal';
+import { scrollToBottom } from '@/shared/hooks/useScrollToBottom';
+import type { TodoItem as TodoItemType, TodoList as TodoListType } from '../types';
 import { TodoItem } from './TodoItem';
 import { TodoItemDetailPanel } from './TodoItemDetailPanel';
-import { ConfirmModal } from '@/shared/components/ConfirmModal';
-import { Button } from '@/shared/components/Button';
-import { Input } from '@/shared/components/Input';
-import { scrollToBottom } from '@/shared/hooks/useScrollToBottom';
 
 interface TodoListProps {
   list: TodoListType;
@@ -16,7 +22,6 @@ interface TodoListProps {
   onDeleteList: () => void;
   onCreateItem: (name: string) => void;
   onToggleItem: (itemId: number) => void;
-  onEditItem: (itemId: number) => void;
   onDeleteItem: (itemId: number) => void;
   onReorderItem: (itemId: number, newOrder: number) => void;
   onUpdateItem: (itemId: number, input: { name?: string; description?: string; done?: boolean }) => void;
@@ -30,11 +35,10 @@ export function TodoList({
   onDeleteList,
   onCreateItem,
   onToggleItem,
-  onEditItem,
   onDeleteItem,
   onReorderItem,
   onUpdateItem,
-  scrollContainerRef
+  scrollContainerRef,
 }: TodoListProps) {
   const [newItemName, setNewItemName] = useState('');
   const [selectedItem, setSelectedItem] = useState<TodoItemType | null>(null);
@@ -48,8 +52,8 @@ export function TodoList({
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
-    })
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -60,7 +64,10 @@ export function TodoList({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Memoize sortable items to prevent unnecessary re-renders
+  const sortableItemIds = list.todoItems.map((i) => i.id);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newItemName.trim()) {
       onCreateItem(newItemName.trim());
@@ -109,7 +116,13 @@ export function TodoList({
       <div ref={listRef} className="bg-white rounded-xl shadow-sm border border-neutral-900 overflow-hidden">
         <div className="bg-neutral-900 px-5 py-4 flex items-center justify-between">
           {isEditingName ? (
-            <form onSubmit={(e) => { e.preventDefault(); handleSaveName(); }} className="flex-1 flex items-center gap-2">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveName();
+              }}
+              className="flex-1 flex items-center gap-2"
+            >
               <ClipboardList size={18} className="text-white flex-shrink-0" />
               <input
                 ref={nameInputRef}
@@ -134,17 +147,11 @@ export function TodoList({
           )}
           <div className="flex gap-2">
             {!isEditingName && (
-              <button
-                onClick={handleStartEditName}
-                className="text-neutral-400 hover:text-white"
-              >
+              <button onClick={handleStartEditName} className="text-neutral-400 hover:text-white">
                 <Edit size={18} />
               </button>
             )}
-            <button
-              onClick={onDeleteList}
-              className="text-neutral-400 hover:text-red-400"
-            >
+            <button onClick={onDeleteList} className="text-neutral-400 hover:text-red-400">
               <Trash2 size={18} />
             </button>
           </div>
@@ -153,7 +160,7 @@ export function TodoList({
         <div className="p-5">
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <ul className="space-y-2 mb-4">
-              <SortableContext items={list.todoItems.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+              <SortableContext items={sortableItemIds} strategy={verticalListSortingStrategy}>
                 {list.todoItems.map((item) => (
                   <TodoItem
                     key={item.id}
@@ -200,6 +207,7 @@ export function TodoList({
 
       {selectedItem && (
         <TodoItemDetailPanel
+          key={selectedItem.id}
           item={selectedItem}
           onClose={() => setSelectedItem(null)}
           onUpdate={onUpdateItem}
