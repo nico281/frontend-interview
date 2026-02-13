@@ -27,6 +27,6 @@ async function bootstrap() {
     customCssUrl: 'http://localhost:4000/assets/swagger-theme.css',
   });
 
-  await app.listen(4000);
+  await app.listen(process.env.PORT || 4000);
 }
 bootstrap();
