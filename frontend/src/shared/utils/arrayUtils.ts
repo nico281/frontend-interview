@@ -1,27 +1,10 @@
-/**
- * Moves an item from one index to another in an array.
- * @param array - The array to modify
- * @param fromIndex - The index of the item to move
- * @param toIndex - The target index
- * @returns A new array with the item moved
- */
-export function arrayMove<T>(array: T[], fromIndex: number, toIndex: number): T[] {
-  const result = [...array];
-  const [removed] = result.splice(fromIndex, 1);
-  result.splice(toIndex, 0, removed);
-  return result;
-}
-
-import type { TodoList as TodoListType, TodoItem as TodoItemType } from '@/app/todo-lists/types';
+import type { TodoList as TodoListType, TodoItem } from '@/app/todo-lists/types';
 
 /**
  * Moves an item from one index to another in an array.
- * @param array - The array to modify
- * @param fromIndex - The index of the item to move
- * @param toIndex - The target index
- * @returns A new array with the item moved
+ * Based on dnd-kit's arrayMove but locally implemented.
  */
-export function arrayMove<T>(array: T[], fromIndex: number, toIndex: number): T[] {
+function arrayMove<T>(array: T[], fromIndex: number, toIndex: number): T[] {
   const result = [...array];
   const [removed] = result.splice(fromIndex, 1);
   result.splice(toIndex, 0, removed);
@@ -48,9 +31,16 @@ export function reorderItemInList(
     const oldIndex = list.todoItems.findIndex((i) => i.id === itemId);
     if (oldIndex === -1) return list;
 
+    // Map to TodoItem with defaults
+    const reorderedItems: TodoItem[] = list.todoItems.map((item) => ({
+      ...item,
+      done: item.done ?? false,
+      order: item.order ?? 0,
+    }));
+
     return {
       ...list,
-      todoItems: arrayMove(list.todoItems, oldIndex, newOrder),
+      todoItems: arrayMove(reorderedItems, oldIndex, newOrder),
     };
   });
 }
