@@ -37,6 +37,8 @@ interface TodoListProps {
   ) => void;
   onViewItem?: (itemId: number) => void;
   scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export function TodoList({
@@ -48,6 +50,8 @@ export function TodoList({
   onDeleteItem,
   onReorderItem,
   onUpdateItem,
+  className,
+  style,
   scrollContainerRef,
 }: TodoListProps) {
   const [newItemName, setNewItemName] = useState("");
@@ -122,7 +126,8 @@ export function TodoList({
     <>
       <div
         ref={listRef}
-        className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-900 dark:border-neutral-200 overflow-hidden"
+        className={`bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-900 dark:border-neutral-200 overflow-hidden ${className || ''}`}
+        style={style}
       >
         <div className="bg-neutral-900 dark:bg-neutral-200 px-5 py-4 flex items-center justify-between">
           {isEditingName ? (

@@ -60,11 +60,13 @@ export default function TodoListsApp() {
             <p className="text-red-600">Error: {(lists.error as Error).message}</p>
           ) : (
             <div className="space-y-4">
-              {lists.data?.map((list) => (
+              {lists.data?.map((list, index) => (
                 <TodoList
                   key={list.id}
                   list={list}
                   scrollContainerRef={scrollContainerRef}
+                  style={{ animationDelay: `${index * 50}ms` }}
+                  className="animate-fade-in-up opacity-0"
                   onUpdateList={(name) => updateList.mutate({ id: list.id, input: { name } })}
                   onDeleteList={() => setDeleteConfirmList(list.id)}
                   onCreateItem={(name) => createItem.mutate({ listId: list.id, input: { name } })}
