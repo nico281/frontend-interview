@@ -52,7 +52,10 @@ export default function TodoListsApp() {
       <main ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         <div className="max-w-md mx-auto px-6 py-4">
           {lists.isLoading ? (
-            <p className="text-neutral-600 dark:text-neutral-400">Loading...</p>
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-8 h-8 border-2 border-neutral-900 dark:border-neutral-100 border-t-transparent rounded-full animate-spin" />
+              <p className="mt-4 text-neutral-600 dark:text-neutral-400 text-sm">Loading...</p>
+            </div>
           ) : lists.error ? (
             <p className="text-red-600">Error: {(lists.error as Error).message}</p>
           ) : (
