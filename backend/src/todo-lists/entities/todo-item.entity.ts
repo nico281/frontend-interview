@@ -6,7 +6,7 @@ export class TodoItem {
     example: 1,
   })
   id: number;
-  
+
   @ApiProperty({
     description: 'Name of the todo item',
     example: 'Buy milk',
@@ -25,4 +25,10 @@ export class TodoItem {
     example: false,
   })
   done: boolean;
+
+  @ApiProperty({
+    description: 'Order position for drag and drop',
+    example: 0,
+  })
+  order: number;
 }

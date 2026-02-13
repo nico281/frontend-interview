@@ -16,11 +16,18 @@ export class TodoListsService {
   }
 
   findAll(): TodoList[] {
-    return this.todolists;
+    return this.todolists.map(list => ({
+      ...list,
+      todoItems: list.todoItems.sort((a, b) => a.order - b.order)
+    }));
   }
 
   findOne(id: number): TodoList {
-    return this.assertTodoListExists(id);
+    const list = this.assertTodoListExists(id);
+    return {
+      ...list,
+      todoItems: list.todoItems.sort((a, b) => a.order - b.order)
+    };
   }
 
   create(dto: CreateTodoListDto): TodoList {
@@ -30,7 +37,7 @@ export class TodoListsService {
       todoItems: [],
     };
 
-    // Add the record
+    // Add record
     this.todolists.push(todoList);
 
     return todoList;
@@ -39,7 +46,7 @@ export class TodoListsService {
   update(id: number, dto: UpdateTodoListDto): TodoList {
     const todolist = this.assertTodoListExists(id);
 
-    // Update the record
+    // Update record
     todolist.name = dto.name;
 
     return todolist;
@@ -48,7 +55,7 @@ export class TodoListsService {
   delete(id: number): void {
     const todoList = this.assertTodoListExists(id);
 
-    // Delete the record
+    // Delete record
     this.todolists.splice(this.todolists.indexOf(todoList), 1);
   }
 
@@ -61,14 +68,17 @@ export class TodoListsService {
   addTodoItem(todoListId: number, todoItemDto: AddTodoItemDto): TodoItem {
     const todoList = this.assertTodoListExists(todoListId);
 
+    const nextOrder = Math.max(-1, ...todoList.todoItems.map(i => i.order)) + 1;
+
     const todoItem: TodoItem = {
       id: this.nextId(todoList.todoItems),
       name: todoItemDto.name,
       description: todoItemDto.description,
       done: false,
+      order: nextOrder,
     };
 
-    // Add the record
+    // Add record
     todoList.todoItems.push(todoItem);
 
     return todoItem;
@@ -77,8 +87,9 @@ export class TodoListsService {
   findAllTodoItems(todoListId: number): TodoItem[] {
     const todoList = this.assertTodoListExists(todoListId);
 
-    return todoList.todoItems;
+    return todoList.todoItems.sort((a, b) => a.order - b.order);
   }
+
   findOneTodoItem(todoListId: number, todoItemId: number): TodoItem {
     const todoList = this.assertTodoListExists(todoListId);
 
@@ -93,10 +104,11 @@ export class TodoListsService {
     const todoList = this.assertTodoListExists(todoListId);
     const todoItem = this.assertTodoItemExists(todoList, todoItemId);
 
-    // Update the record
-    todoItem.name = todoItemDto.name ?? todoItem.name;
-    todoItem.description = todoItemDto.description ?? todoItem.description;
-    todoItem.done = todoItemDto.done ?? todoItem.done;
+    // Update record
+    if (todoItemDto.name !== undefined) todoItem.name = todoItemDto.name;
+    if (todoItemDto.description !== undefined) todoItem.description = todoItemDto.description;
+    if (todoItemDto.done !== undefined) todoItem.done = todoItemDto.done;
+    if (todoItemDto.order !== undefined) todoItem.order = todoItemDto.order;
 
     return todoItem;
   }
@@ -105,7 +117,7 @@ export class TodoListsService {
     const todoList = this.assertTodoListExists(todoListId);
     const todoItem = this.assertTodoItemExists(todoList, todoItemId);
 
-    // Delete the record
+    // Delete record
     todoList.todoItems.splice(todoList.todoItems.indexOf(todoItem), 1);
   }
 

@@ -1,6 +1,6 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { AddTodoItemDto } from './add-todo-item.dto';
-import { IsBoolean, IsOptional } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional } from 'class-validator';
 
 export class UpdateTodoItemDto extends PartialType(AddTodoItemDto) {
   @ApiProperty({
@@ -10,5 +10,14 @@ export class UpdateTodoItemDto extends PartialType(AddTodoItemDto) {
   })
   @IsBoolean()
   @IsOptional()
-  done: boolean;
+  done?: boolean;
+
+  @ApiProperty({
+    description: 'Order position for drag and drop',
+    example: 0,
+    required: false,
+  })
+  @IsNumber()
+  @IsOptional()
+  order?: number;
 }

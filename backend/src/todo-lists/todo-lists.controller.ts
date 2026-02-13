@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
@@ -58,7 +59,7 @@ export class TodoListsController {
     return this.todoListsService.findOne(param.todoListId);
   }
 
-  @Put('/:todoListId')
+  @Patch('/:todoListId')
   @ApiOperation({
     summary: 'Update a todo list by id',
   })
@@ -131,7 +132,7 @@ export class TodoListsController {
     );
   }
 
-  @Put('/:todoListId/todo-items/:todoItemId')
+  @Patch('/:todoListId/todo-items/:todoItemId')
   @ApiOperation({
     summary: 'Update a todo item by id',
   })
