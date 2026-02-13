@@ -1,5 +1,4 @@
 import { ConfirmModal } from "@/shared/components/ConfirmModal";
-import { scrollToBottom } from "@/shared/hooks/useScrollToBottom";
 import {
   closestCenter,
   DndContext,
@@ -87,6 +86,17 @@ export function TodoList({
     if (newItemName.trim()) {
       onCreateItem(newItemName.trim());
       setNewItemName("");
+      if (scrollContainerRef) {
+        setTimeout(() => {
+          const container = scrollContainerRef.current;
+          if (container) {
+            const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 200;
+            if (isNearBottom) {
+              container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+            }
+          }
+        }, 150);
+      }
     }
   };
 
