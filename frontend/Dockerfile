@@ -8,9 +8,9 @@ RUN npm install
 
 COPY . .
 
-# Use Render environment variable if available, else default to production backend with /api
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL:-https://todos-api-2ott.onrender.com/api}
+# Set API URL as build arg and environment variable for Vite
+ARG VITE_API_URL=https://todos-api-2ott.onrender.com/api
+ENV VITE_API_URL=${VITE_API_URL}
 
 RUN npm run build
 
