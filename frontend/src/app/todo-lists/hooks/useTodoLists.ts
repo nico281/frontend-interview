@@ -107,8 +107,16 @@ export function useTodoLists() {
   });
 
   const reorderItem = useMutation({
-    mutationFn: ({ listId, itemId, newOrder }: { listId: number; itemId: number; newOrder: number }) =>
-      api.reorderItem(listId, itemId, newOrder),
+    mutationFn: async ({ listId, itemId, newOrder }: { listId: number; itemId: number; newOrder: number }) => {
+      // Calculate new item IDs order
+      const lists = queryClient.getQueryData<TodoListType[]>(queryKey);
+      const reorderedLists = reorderItemInList(lists || [], listId, itemId, newOrder);
+      const updatedList = reorderedLists?.find((l) => l.id === listId);
+      if (!updatedList) throw new Error('List not found');
+
+      const itemIds = updatedList.todoItems.map((i) => i.id);
+      return api.reorderItems(listId, itemIds);
+    },
     onMutate: ({ listId, itemId, newOrder }) => {
       queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
@@ -118,7 +126,7 @@ export function useTodoLists() {
       );
       return { prev };
     },
-    // Don't invalidate - we keep optimistic state
+    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
     onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev),
   });
 

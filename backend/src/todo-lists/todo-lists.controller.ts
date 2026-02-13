@@ -59,7 +59,7 @@ export class TodoListsController {
     return this.todoListsService.findOne(param.todoListId);
   }
 
-  @Patch('/:todoListId')
+  @Put('/:todoListId')
   @ApiOperation({
     summary: 'Update a todo list by id',
   })
@@ -165,5 +165,19 @@ export class TodoListsController {
     @Param() param: { todoListId: number; todoItemId: number },
   ): void {
     this.todoListsService.removeTodoItem(param.todoListId, param.todoItemId);
+  }
+
+  @Put('/:todoListId/todo-items/reorder')
+  @ApiOperation({
+    summary: 'Reorder all todo items in a list',
+  })
+  @ApiParam({ name: 'todoListId', description: 'The id of the todo list', type: Number })
+  @ApiBody({ schema: { type: 'array', items: { type: 'number' } } })
+  @ApiOkResponse({ description: 'All todo items with updated order', type: [TodoItem] })
+  reorderItems(
+    @Param() param: { todoListId: number },
+    @Body() itemIds: number[],
+  ): TodoItem[] {
+    return this.todoListsService.reorderItems(param.todoListId, itemIds);
   }
 }

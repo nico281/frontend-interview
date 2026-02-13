@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import type { TodoItem as TodoItemType } from '../types';
 
 interface TodoItemDetailPanelProps {
@@ -14,6 +14,11 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
   const [description, setDescription] = useState(item?.description || '');
   const [isClosing, setIsClosing] = useState(false);
 
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(onClose, 300);
+  };
+
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && item && !isClosing) {
@@ -22,14 +27,10 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item, isClosing]);
 
   if (!item) return null;
-
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(onClose, 300);
-  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -71,14 +72,14 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
               <p className="text-neutral-900">{item.name}</p>
             </div>
 
-            {item.description && (
-              <div>
-                <h3 className="text-sm font-medium text-neutral-500 mb-2">Description</h3>
+            <div>
+              <h3 className="text-sm font-medium text-neutral-500 mb-2">Description</h3>
+              {item.description ? (
                 <p className="text-neutral-900 whitespace-pre-wrap">{item.description}</p>
-              </div>
-            )}
-
-            {!item.description && <p className="text-neutral-400 italic">No description</p>}
+              ) : (
+                <p className="text-neutral-400 italic">No description</p>
+              )}
+            </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">

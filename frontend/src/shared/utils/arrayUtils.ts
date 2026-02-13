@@ -31,16 +31,19 @@ export function reorderItemInList(
     const oldIndex = list.todoItems.findIndex((i) => i.id === itemId);
     if (oldIndex === -1) return list;
 
-    // Map to TodoItem with defaults
-    const reorderedItems: TodoItem[] = list.todoItems.map((item) => ({
+    // Move the item to the new position
+    const reorderedItems = arrayMove(list.todoItems, oldIndex, newOrder);
+
+    // Update the order property for all items to match their new positions
+    const itemsWithUpdatedOrder = reorderedItems.map((item, index) => ({
       ...item,
       done: item.done ?? false,
-      order: item.order ?? 0,
+      order: index,
     }));
 
     return {
       ...list,
-      todoItems: arrayMove(reorderedItems, oldIndex, newOrder),
+      todoItems: itemsWithUpdatedOrder,
     };
   });
 }

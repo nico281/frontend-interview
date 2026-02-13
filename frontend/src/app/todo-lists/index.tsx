@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { type FormEvent, useRef, useState } from 'react';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
 import { scrollToBottom } from '@/shared/hooks/useScrollToBottom';
 import { TodoList } from './components/TodoList';
@@ -65,7 +65,7 @@ export default function TodoListsApp() {
                   onDeleteList={() => setDeleteConfirmList(list.id)}
                   onCreateItem={(name) => createItem.mutate({ listId: list.id, input: { name } })}
                   onToggleItem={(itemId) => {
-                    const item = list.todoItems.find((i) => i.id === itemId);
+                    const item = lists.data?.find((l) => l.id === list.id)?.todoItems.find((i) => i.id === itemId);
                     updateItem.mutate({
                       listId: list.id,
                       itemId,

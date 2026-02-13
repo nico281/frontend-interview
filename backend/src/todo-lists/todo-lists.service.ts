@@ -121,6 +121,21 @@ export class TodoListsService {
     todoList.todoItems.splice(todoList.todoItems.indexOf(todoItem), 1);
   }
 
+  reorderItems(todoListId: number, itemIds: number[]): TodoItem[] {
+    const todoList = this.assertTodoListExists(todoListId);
+
+    // Update order for all items based on the new order
+    itemIds.forEach((itemId, index) => {
+      const item = todoList.todoItems.find((i) => i.id === itemId);
+      if (item) {
+        item.order = index;
+      }
+    });
+
+    // Return sorted items
+    return todoList.todoItems.sort((a, b) => a.order - b.order);
+  }
+
   /**
   --------------------------------------------------------------------
   # Helper Methods
