@@ -36,6 +36,7 @@ interface TodoListProps {
     input: { name?: string; description?: string; done?: boolean },
   ) => void;
   onViewItem?: (itemId: number) => void;
+  scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
   className?: string;
   style?: React.CSSProperties;
 }
