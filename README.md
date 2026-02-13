@@ -2,8 +2,6 @@
 
 Full-stack Todo List app with CRUD, drag & drop reordering, and dark mode.
 
-Demo: frontend-f0ht.onrender.com
-
 ## Stack
 
 **Backend**: NestJS • Swagger • Class Validator • Jest
