@@ -17,16 +17,16 @@ export default function TodoListsApp() {
     if (newListName.trim()) {
       createList.mutate({ name: newListName.trim() });
       setNewListName('');
-      // Scroll to bottom only if we're creating a list and container is near bottom
+      // Scroll to bottom after creating a new list
       setTimeout(() => {
         const container = scrollContainerRef.current;
         if (container) {
-          const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+          const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 200;
           if (isNearBottom) {
             container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
           }
         }
-      }, 100);
+      }, 150);
     }
   };
 
