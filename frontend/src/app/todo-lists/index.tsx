@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react';
 import { type FormEvent, useRef, useState } from 'react';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
+import { ThemeToggle } from '@/shared/components/ThemeToggle';
 import { scrollToBottom } from '@/shared/hooks/useScrollToBottom';
 import { TodoList } from './components/TodoList';
 import { useTodoLists } from './hooks/useTodoLists';
@@ -21,13 +22,13 @@ export default function TodoListsApp() {
   };
 
   return (
-    <div className="h-screen bg-white flex flex-col overflow-hidden">
-      <header className="bg-neutral-900 py-4 px-6 flex items-center justify-between flex-shrink-0">
-        <h1 className="text-white text-xl font-semibold">To-Do List</h1>
-        {/* Theme toggle placeholder */}
+    <div className="h-screen bg-white dark:bg-neutral-900 flex flex-col overflow-hidden">
+      <header className="bg-neutral-900 dark:bg-neutral-100 py-4 px-6 flex items-center justify-between flex-shrink-0">
+        <h1 className="text-white dark:text-neutral-900 text-xl font-semibold">To-Do List</h1>
+        <ThemeToggle />
       </header>
 
-      <div className="flex-shrink-0 bg-white border-b border-neutral-200">
+      <div className="flex-shrink-0 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700">
         <main className="max-w-md mx-auto px-6 py-4">
           <form onSubmit={handleCreateList} className="relative">
             <input
@@ -35,12 +36,12 @@ export default function TodoListsApp() {
               placeholder="New list name..."
               value={newListName}
               onChange={(e) => setNewListName(e.target.value)}
-              className="w-full pr-12 pl-4 py-2 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-neutral-900"
+              className="w-full pr-12 pl-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-400 focus:border-neutral-900 dark:focus:border-neutral-400 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white"
             />
             <button
               type="submit"
               disabled={!newListName.trim()}
-              className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-neutral-800 text-white flex items-center justify-center hover:bg-neutral-700 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-neutral-800 dark:bg-neutral-200 text-white dark:text-neutral-900 flex items-center justify-center hover:bg-neutral-700 dark:hover:bg-neutral-300 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Plus size={18} />
             </button>

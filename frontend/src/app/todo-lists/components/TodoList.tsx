@@ -122,9 +122,9 @@ export function TodoList({
     <>
       <div
         ref={listRef}
-        className="bg-white rounded-xl shadow-sm border border-neutral-900 overflow-hidden"
+        className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-900 dark:border-neutral-200 overflow-hidden"
       >
-        <div className="bg-neutral-900 px-5 py-4 flex items-center justify-between">
+        <div className="bg-neutral-900 dark:bg-neutral-200 px-5 py-4 flex items-center justify-between">
           {isEditingName ? (
             <form
               onSubmit={(e) => {
@@ -133,7 +133,7 @@ export function TodoList({
               }}
               className="flex-1 flex items-center gap-2"
             >
-              <ClipboardList size={18} className="text-white flex-shrink-0" />
+              <ClipboardList size={18} className="text-white dark:text-neutral-900 flex-shrink-0" />
               <input
                 ref={nameInputRef}
                 type="text"
@@ -146,11 +146,11 @@ export function TodoList({
                     handleSaveName();
                   }
                 }}
-                className="flex-1 bg-white/10 text-white font-semibold text-sm px-2 py-1 rounded border border-white/30 focus:outline-none focus:border-white"
+                className="flex-1 bg-white/10 dark:bg-neutral-900/10 text-white dark:text-neutral-900 font-semibold text-sm px-2 py-1 rounded border border-white/30 dark:border-neutral-600 focus:outline-none focus:border-white dark:focus:border-neutral-400"
               />
             </form>
           ) : (
-            <h2 className="font-semibold text-white flex items-center gap-2">
+            <h2 className="font-semibold text-white dark:text-neutral-900 flex items-center gap-2">
               <ClipboardList size={18} />
               {list.name}
             </h2>
@@ -159,14 +159,14 @@ export function TodoList({
             {!isEditingName && (
               <button
                 onClick={handleStartEditName}
-                className="text-neutral-400 hover:text-white"
+                className="text-neutral-400 dark:text-neutral-600 hover:text-white dark:hover:text-neutral-900"
               >
                 <Edit size={18} />
               </button>
             )}
             <button
               onClick={onDeleteList}
-              className="text-neutral-400 hover:text-red-400"
+              className="text-neutral-400 dark:text-neutral-600 hover:text-red-400 dark:hover:text-red-500"
             >
               <Trash2 size={18} />
             </button>
@@ -219,12 +219,12 @@ export function TodoList({
               placeholder="Add a new task"
               value={newItemName}
               onChange={(e) => setNewItemName(e.target.value)}
-              className="w-full pr-12 pl-4 py-2 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-neutral-900"
+              className="w-full pr-12 pl-4 py-2 border border-neutral-200 dark:border-neutral-600 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-neutral-400 focus:border-neutral-900 dark:focus:border-neutral-400 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
             />
             <button
               type="submit"
               disabled={!newItemName.trim()}
-              className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-neutral-800 text-white flex items-center justify-center hover:bg-neutral-700 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-neutral-800 dark:bg-neutral-200 text-white dark:text-neutral-900 flex items-center justify-center hover:bg-neutral-700 dark:hover:bg-neutral-300 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Plus size={18} />
             </button>
