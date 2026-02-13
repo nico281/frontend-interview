@@ -8,6 +8,10 @@ RUN npm install
 
 COPY . .
 
+# Build argument for API URL
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
+
 RUN npm run build
 
 FROM node:20.12.0
@@ -18,7 +22,6 @@ WORKDIR /app
 RUN npm install -g serve
 
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/serve.json ./serve.json
 
 EXPOSE 4173
 
