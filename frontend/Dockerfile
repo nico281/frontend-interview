@@ -14,9 +14,11 @@ FROM node:20.12.0
 
 WORKDIR /app
 
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+# Install a simple HTTP server
+RUN npm install -g serve
+
 COPY --from=builder /app/dist ./dist
 
 EXPOSE 4173
-CMD [ "npm", "run", "preview" ]
+
+CMD ["serve", "-s", "dist", "-l", "4173"]
