@@ -87,19 +87,6 @@ export function TodoList({
     if (newItemName.trim()) {
       onCreateItem(newItemName.trim());
       setNewItemName("");
-      // Scroll to the newly added item within this list
-      setTimeout(() => {
-        const listEl = listRef.current;
-        if (listEl) {
-          const itemsContainer = listEl.querySelector('[data-items-container]');
-          if (itemsContainer) {
-            itemsContainer.scrollTo({
-              top: itemsContainer.scrollHeight,
-              behavior: 'smooth',
-            });
-          }
-        }
-      }, 100);
     }
   };
 

@@ -69,11 +69,13 @@ export default function TodoListsApp() {
             <p className="text-red-600">Error: {(lists.error as Error).message}</p>
           ) : (
             <div className="space-y-4">
-              {lists.data?.map((list, index) => (
+              {lists.data?.map((list, index) => {
+                const isLast = index === (lists.data?.length ?? 0) - 1;
+                return (
                 <TodoList
                   key={list.id}
                   list={list}
-                  scrollContainerRef={scrollContainerRef}
+                  scrollContainerRef={isLast ? scrollContainerRef : undefined}
                   style={{ animationDelay: `${index * 50}ms` }}
                   className="animate-fade-in-up opacity-0"
                   onUpdateList={(name) => updateList.mutate({ id: list.id, input: { name } })}
@@ -93,7 +95,8 @@ export default function TodoListsApp() {
                   onReorderItem={(itemId, newOrder) => reorderItem.mutate({ listId: list.id, itemId, newOrder })}
                   onUpdateItem={(itemId, input) => updateItem.mutate({ listId: list.id, itemId, input })}
                 />
-              ))}
+              );
+              })}
             </div>
           )}
         </div>
