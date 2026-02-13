@@ -36,7 +36,6 @@ interface TodoListProps {
     input: { name?: string; description?: string; done?: boolean },
   ) => void;
   onViewItem?: (itemId: number) => void;
-  scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -87,8 +86,19 @@ export function TodoList({
     if (newItemName.trim()) {
       onCreateItem(newItemName.trim());
       setNewItemName("");
-      const targetRef = scrollContainerRef || listRef;
-      scrollToBottom(targetRef);
+      // Scroll to the newly added item within this list
+      setTimeout(() => {
+        const listEl = listRef.current;
+        if (listEl) {
+          const itemsContainer = listEl.querySelector('[data-items-container]');
+          if (itemsContainer) {
+            itemsContainer.scrollTo({
+              top: itemsContainer.scrollHeight,
+              behavior: 'smooth',
+            });
+          }
+        }
+      }, 100);
     }
   };
 
@@ -184,7 +194,7 @@ export function TodoList({
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
           >
-            <ul className="space-y-2 mb-4">
+            <ul className="space-y-2 mb-4" data-items-container>
               <SortableContext
                 items={sortableItemIds}
                 strategy={verticalListSortingStrategy}

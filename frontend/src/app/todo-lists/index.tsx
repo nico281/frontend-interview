@@ -10,14 +10,12 @@ export default function TodoListsApp() {
   const { lists, createList, deleteList, updateList, createItem, updateItem, deleteItem, reorderItem } = useTodoLists();
   const [newListName, setNewListName] = useState('');
   const [deleteConfirmList, setDeleteConfirmList] = useState<number | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const handleCreateList = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newListName.trim()) {
       createList.mutate({ name: newListName.trim() });
       setNewListName('');
-      scrollToBottom(scrollContainerRef);
     }
   };
 
@@ -64,7 +62,6 @@ export default function TodoListsApp() {
                 <TodoList
                   key={list.id}
                   list={list}
-                  scrollContainerRef={scrollContainerRef}
                   style={{ animationDelay: `${index * 50}ms` }}
                   className="animate-fade-in-up opacity-0"
                   onUpdateList={(name) => updateList.mutate({ id: list.id, input: { name } })}

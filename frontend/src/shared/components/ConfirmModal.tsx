@@ -43,7 +43,7 @@ export function ConfirmModal({
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600"
+            className="px-4 py-2 text-sm font-medium bg-neutral-900 dark:bg-neutral-200 text-white dark:text-neutral-900 rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-300"
           >
             {confirmLabel}
           </button>
