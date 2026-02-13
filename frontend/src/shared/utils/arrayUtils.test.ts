@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { arrayMove, reorderItemInList } from './arrayUtils';
-import type { TodoList as TodoListType } from '@/app/todo-lists/types';
 
 describe('arrayMove', () => {
   it('moves item from index 0 to index 2', () => {
@@ -50,7 +49,7 @@ describe('arrayMove', () => {
 });
 
 describe('reorderItemInList', () => {
-  const mockLists = [
+  const mockLists: TodoList[] = [
     {
       id: 1,
       name: 'List 1',
