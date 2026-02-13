@@ -1,7 +1,6 @@
-import type { DialogProps } from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 
-interface ConfirmModalProps extends DialogProps {
+interface ConfirmModalProps {
   isOpen: boolean;
   title: string;
   message: string;

@@ -10,7 +10,7 @@ export default function TodoListsApp() {
   const { lists, createList, deleteList, updateList, createItem, updateItem, deleteItem, reorderItem } = useTodoLists();
   const [newListName, setNewListName] = useState('');
   const [deleteConfirmList, setDeleteConfirmList] = useState<number | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const handleCreateList = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

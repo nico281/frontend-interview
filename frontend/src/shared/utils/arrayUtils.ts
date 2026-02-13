@@ -1,10 +1,10 @@
-import type { TodoList as TodoListType, TodoItem } from '@/app/todo-lists/types';
+import type { TodoList as TodoListType } from '@/app/todo-lists/types';
 
 /**
  * Moves an item from one index to another in an array.
  * Based on dnd-kit's arrayMove but locally implemented.
  */
-function arrayMove<T>(array: T[], fromIndex: number, toIndex: number): T[] {
+export function arrayMove<T>(array: T[], fromIndex: number, toIndex: number): T[] {
   const result = [...array];
   const [removed] = result.splice(fromIndex, 1);
   result.splice(toIndex, 0, removed);

@@ -1,4 +1,5 @@
 import { render, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ThemeProvider, useTheme } from './ThemeContext';
 
 const localStorageMock = (() => {
@@ -17,11 +18,10 @@ const localStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(global, 'localStorage', { value: localStorageMock });
+vi.stubGlobal('localStorage', localStorageMock);
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: (query: string) => ({
+vi.stubGlobal('window', {
+  matchMedia: (query: string) => ({
     matches: false,
     media: query,
     addEventListener: () => {},
@@ -52,9 +52,8 @@ describe('ThemeContext', () => {
   });
 
   it('should use system dark preference when no localStorage', async () => {
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: (query: string) => ({
+    vi.stubGlobal('window', {
+      matchMedia: (query: string) => ({
         matches: true,
         media: query,
         addEventListener: () => {},

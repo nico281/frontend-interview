@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { arrayMove, reorderItemInList } from './arrayUtils';
+import type { TodoList } from '@/app/todo-lists/types';
 
 describe('arrayMove', () => {
   it('moves item from index 0 to index 2', () => {
@@ -49,21 +50,21 @@ describe('arrayMove', () => {
 });
 
 describe('reorderItemInList', () => {
-  const mockLists = [
+  const mockLists: TodoListType[] = [
     {
       id: 1,
       name: 'List 1',
       todoItems: [
-        { id: 10, name: 'Item 1' },
-        { id: 11, name: 'Item 2' },
+        { id: 10, name: 'Item 1', done: false, order: 0 },
+        { id: 11, name: 'Item 2', done: false, order: 1 },
       ],
     },
     {
       id: 2,
       name: 'List 2',
       todoItems: [
-        { id: 20, name: 'Item A' },
-        { id: 21, name: 'Item B' },
+        { id: 20, name: 'Item A', done: false, order: 0 },
+        { id: 21, name: 'Item B', done: false, order: 1 },
       ],
     },
   ];
@@ -71,16 +72,16 @@ describe('reorderItemInList', () => {
   it('reorders item within the correct list', () => {
     const result = reorderItemInList(mockLists, 1, 10, 1);
     expect(result[0].todoItems).toEqual([
-      { id: 11, name: 'Item 2' },
-      { id: 10, name: 'Item 1' },
+      { id: 11, name: 'Item 2', done: false, order: 0 },
+      { id: 10, name: 'Item 1', done: false, order: 1 },
     ]);
   });
 
   it('does not affect other lists', () => {
     const result = reorderItemInList(mockLists, 1, 10, 1);
     expect(result[1].todoItems).toEqual([
-      { id: 20, name: 'Item A' },
-      { id: 21, name: 'Item B' },
+      { id: 20, name: 'Item A', done: false, order: 0 },
+      { id: 21, name: 'Item B', done: false, order: 1 },
     ]);
   });
 
@@ -103,8 +104,8 @@ describe('reorderItemInList', () => {
   it('moves item from index 1 to index 0', () => {
     const result = reorderItemInList(mockLists, 2, 21, 0);
     expect(result[1].todoItems).toEqual([
-      { id: 21, name: 'Item B' },
-      { id: 20, name: 'Item A' },
+      { id: 21, name: 'Item B', done: false, order: 0 },
+      { id: 20, name: 'Item A', done: false, order: 1 },
     ]);
   });
 });

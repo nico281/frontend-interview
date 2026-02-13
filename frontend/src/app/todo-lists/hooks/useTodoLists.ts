@@ -122,7 +122,7 @@ export function useTodoLists() {
       const prev = queryClient.getQueryData(queryKey);
       // Update optimistically
       queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
-        reorderItemInList(old, listId, itemId, newOrder),
+        reorderItemInList(old || [], listId, itemId, newOrder),
       );
       return { prev };
     },

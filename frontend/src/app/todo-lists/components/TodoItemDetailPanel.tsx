@@ -123,7 +123,6 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
             </button>
             <button
               type="submit"
-              onClick={handleSubmit}
               className="px-4 py-2 bg-neutral-900 dark:bg-neutral-200 text-white dark:text-neutral-900 text-sm rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-300"
             >
               Save Changes
