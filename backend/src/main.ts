@@ -8,7 +8,7 @@ async function bootstrap() {
 
   // Enable CORS for production
   app.enableCors({
-    origin: ['http://localhost:5173', 'https://*.onrender.com'],
+    origin: ['http://localhost:5173', 'https://frontend-f0ht.onrender.com'],
     credentials: true,
   });
 
