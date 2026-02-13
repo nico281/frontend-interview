@@ -91,14 +91,13 @@ export function useTodoLists() {
       queryClient.setQueryData(queryKey, (old: any) =>
         old?.map((list: any) =>
           list.id === listId
-            ? { ...list, todoItems: list.todoItems.filter((item: any) => item.id !== itemId) }
+            ? { ...list, todoItems: list.todoItems.filter((i: any) => i.id !== itemId) }
             : list
         )
       );
       return { prev };
     },
-    onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev),
-    onSettled: () => queryClient.invalidateQueries({ queryKey })
+    onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev)
   });
 
   const reorderItem = useMutation({
@@ -119,8 +118,7 @@ export function useTodoLists() {
       );
       return { prev };
     },
-    onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev),
-    onSettled: () => queryClient.invalidateQueries({ queryKey })
+    onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev)
   });
 
   return {

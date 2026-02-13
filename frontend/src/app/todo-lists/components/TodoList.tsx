@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { ClipboardList, Edit, Trash2, Plus } from 'lucide-react';
-import type { TodoList as TodoListType } from '../types';
+import type { TodoList as TodoListType, TodoItem as TodoItemType } from '../types';
 import { TodoItem } from './TodoItem';
+import { TodoItemDetailPanel } from './TodoItemDetailPanel';
+import { ConfirmModal } from '@/shared/components/ConfirmModal';
 import { Button } from '@/shared/components/Button';
 import { Input } from '@/shared/components/Input';
+import { scrollToBottom } from '@/shared/hooks/useScrollToBottom';
 
 interface TodoListProps {
   list: TodoListType;
@@ -16,6 +19,9 @@ interface TodoListProps {
   onEditItem: (itemId: number) => void;
   onDeleteItem: (itemId: number) => void;
   onReorderItem: (itemId: number, newOrder: number) => void;
+  onUpdateItem: (itemId: number, input: { name?: string; description?: string; done?: boolean }) => void;
+  onViewItem?: (itemId: number) => void;
+  scrollContainerRef?: React.RefObject<HTMLDivElement>;
 }
 
 export function TodoList({
@@ -26,9 +32,18 @@ export function TodoList({
   onToggleItem,
   onEditItem,
   onDeleteItem,
-  onReorderItem
+  onReorderItem,
+  onUpdateItem,
+  scrollContainerRef
 }: TodoListProps) {
   const [newItemName, setNewItemName] = useState('');
+  const [selectedItem, setSelectedItem] = useState<TodoItemType | null>(null);
+  const [panelMode, setPanelMode] = useState<'view' | 'edit'>('view');
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState('');
+  const [deleteConfirmItem, setDeleteConfirmItem] = useState<TodoItemType | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -50,65 +65,161 @@ export function TodoList({
     if (newItemName.trim()) {
       onCreateItem(newItemName.trim());
       setNewItemName('');
+      const targetRef = scrollContainerRef || listRef;
+      scrollToBottom(targetRef);
     }
   };
 
+  const handleStartEditName = () => {
+    setEditedName(list.name);
+    setIsEditingName(true);
+  };
+
+  const handleSaveName = () => {
+    if (editedName.trim()) {
+      onUpdateList(editedName.trim());
+    }
+    setIsEditingName(false);
+  };
+
+  const handleCancelEditName = () => {
+    setIsEditingName(false);
+    setEditedName('');
+  };
+
+  useEffect(() => {
+    if (isEditingName && nameInputRef.current) {
+      nameInputRef.current.focus();
+      nameInputRef.current.select();
+    }
+  }, [isEditingName]);
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isEditingName) {
+        handleCancelEditName();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isEditingName]);
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-neutral-900 overflow-hidden">
-      <div className="bg-neutral-900 px-5 py-4 flex items-center justify-between">
-        <h2 className="font-semibold text-white flex items-center gap-2">
-          <ClipboardList size={18} />
-          {list.name}
-        </h2>
-        <div className="flex gap-2">
-          <button
-            onClick={() => onUpdateList(list.name)}
-            className="text-neutral-400 hover:text-white"
-          >
-            <Edit size={18} />
-          </button>
-          <button
-            onClick={onDeleteList}
-            className="text-neutral-400 hover:text-red-400"
-          >
-            <Trash2 size={18} />
-          </button>
+    <>
+      <div ref={listRef} className="bg-white rounded-xl shadow-sm border border-neutral-900 overflow-hidden">
+        <div className="bg-neutral-900 px-5 py-4 flex items-center justify-between">
+          {isEditingName ? (
+            <form onSubmit={(e) => { e.preventDefault(); handleSaveName(); }} className="flex-1 flex items-center gap-2">
+              <ClipboardList size={18} className="text-white flex-shrink-0" />
+              <input
+                ref={nameInputRef}
+                type="text"
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                onBlur={handleSaveName}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSaveName();
+                  }
+                }}
+                className="flex-1 bg-white/10 text-white font-semibold text-sm px-2 py-1 rounded border border-white/30 focus:outline-none focus:border-white"
+              />
+            </form>
+          ) : (
+            <h2 className="font-semibold text-white flex items-center gap-2">
+              <ClipboardList size={18} />
+              {list.name}
+            </h2>
+          )}
+          <div className="flex gap-2">
+            {!isEditingName && (
+              <button
+                onClick={handleStartEditName}
+                className="text-neutral-400 hover:text-white"
+              >
+                <Edit size={18} />
+              </button>
+            )}
+            <button
+              onClick={onDeleteList}
+              className="text-neutral-400 hover:text-red-400"
+            >
+              <Trash2 size={18} />
+            </button>
+          </div>
+        </div>
+
+        <div className="p-5">
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <ul className="space-y-2 mb-4">
+              <SortableContext items={list.todoItems.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+                {list.todoItems.map((item) => (
+                  <TodoItem
+                    key={item.id}
+                    item={item}
+                    onToggle={onToggleItem}
+                    onView={(id) => {
+                      setSelectedItem(list.todoItems.find((i) => i.id === id) || null);
+                      setPanelMode('view');
+                    }}
+                    onEdit={(id) => {
+                      setSelectedItem(list.todoItems.find((i) => i.id === id) || null);
+                      setPanelMode('edit');
+                    }}
+                    onDelete={(id) => {
+                      const item = list.todoItems.find((i) => i.id === id);
+                      if (item) {
+                        setDeleteConfirmItem(item);
+                      }
+                    }}
+                  />
+                ))}
+              </SortableContext>
+            </ul>
+          </DndContext>
+
+          <form onSubmit={handleSubmit} className="relative">
+            <input
+              type="text"
+              placeholder="Add a new task"
+              value={newItemName}
+              onChange={(e) => setNewItemName(e.target.value)}
+              className="w-full pr-12 pl-4 py-2 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-neutral-900"
+            />
+            <button
+              type="submit"
+              disabled={!newItemName.trim()}
+              className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-neutral-800 text-white flex items-center justify-center hover:bg-neutral-700 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Plus size={18} />
+            </button>
+          </form>
         </div>
       </div>
 
-      <div className="p-5">
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <ul className="space-y-2 mb-4">
-            <SortableContext items={list.todoItems.map((i) => i.id)} strategy={verticalListSortingStrategy}>
-              {list.todoItems.map((item) => (
-                <TodoItem
-                  key={item.id}
-                  item={item}
-                  onToggle={onToggleItem}
-                  onEdit={onEditItem}
-                  onDelete={onDeleteItem}
-                />
-              ))}
-            </SortableContext>
-          </ul>
-        </DndContext>
+      {selectedItem && (
+        <TodoItemDetailPanel
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+          onUpdate={onUpdateItem}
+          mode={panelMode}
+        />
+      )}
 
-        <form onSubmit={handleSubmit} className="relative">
-          <input
-            type="text"
-            placeholder="Add a new task"
-            value={newItemName}
-            onChange={(e) => setNewItemName(e.target.value)}
-            className="w-full pr-12 pl-4 py-2 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-neutral-900"
-          />
-          <button
-            type="submit"
-            className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-neutral-800 text-white flex items-center justify-center hover:bg-neutral-700"
-          >
-            <Plus size={18} />
-          </button>
-        </form>
-      </div>
-    </div>
+      {deleteConfirmItem && (
+        <ConfirmModal
+          isOpen
+          title="Delete task"
+          message={`Are you sure you want to delete "${deleteConfirmItem.name}"?`}
+          confirmLabel="Delete"
+          onConfirm={() => {
+            onDeleteItem(deleteConfirmItem.id);
+            setDeleteConfirmItem(null);
+          }}
+          onCancel={() => setDeleteConfirmItem(null)}
+        />
+      )}
+    </>
   );
 }

@@ -6,11 +6,12 @@ import type { TodoItem as TodoItemType } from '../types';
 interface TodoItemProps {
   item: TodoItemType;
   onToggle: (id: number) => void;
+  onView: (id: number) => void;
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
 }
 
-export function TodoItem({ item, onToggle, onEdit, onDelete }: TodoItemProps) {
+export function TodoItem({ item, onToggle, onView, onEdit, onDelete }: TodoItemProps) {
   const {
     attributes,
     listeners,
@@ -18,11 +19,14 @@ export function TodoItem({ item, onToggle, onEdit, onDelete }: TodoItemProps) {
     transform,
     transition,
     isDragging
-  } = useSortable({ id: item.id });
+  } = useSortable({
+    id: item.id,
+    animateLayoutChanges: () => false
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: isDragging ? undefined : transition,
     opacity: isDragging ? 0.5 : 1
   };
 
@@ -30,7 +34,7 @@ export function TodoItem({ item, onToggle, onEdit, onDelete }: TodoItemProps) {
     <li
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 py-2 group"
+      className={`group flex items-center gap-3 py-3 px-3 -mx-3 rounded-lg border border-transparent hover:bg-neutral-50 hover:border-neutral-200 ${isDragging ? 'shadow-lg bg-white' : ''}`}
     >
       <button
         className="cursor-grab active:cursor-grabbing text-neutral-300 hover:text-neutral-500"
@@ -47,7 +51,10 @@ export function TodoItem({ item, onToggle, onEdit, onDelete }: TodoItemProps) {
       >
         {item.done && <Check size={14} strokeWidth={3} />}
       </button>
-      <span className={`flex-1 text-sm ${item.done ? 'line-through text-neutral-400' : 'text-neutral-800'}`}>
+      <span
+        onClick={() => onView(item.id)}
+        className={`flex-1 text-sm cursor-pointer ${item.done ? 'line-through text-neutral-400' : 'text-neutral-800'}`}
+      >
         {item.name}
       </span>
       <div className="opacity-0 group-hover:opacity-100 flex gap-2">
