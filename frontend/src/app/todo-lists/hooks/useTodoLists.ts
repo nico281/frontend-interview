@@ -59,6 +59,25 @@ export function useTodoLists() {
 
   const createItem = useMutation({
     mutationFn: ({ listId, input }: { listId: number; input: CreateItemInput }) => api.createTodoItem(listId, input),
+    onMutate: async ({ listId, input }) => {
+      await queryClient.cancelQueries({ queryKey });
+      const prev = queryClient.getQueryData(queryKey);
+      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
+        old?.map((list: TodoListType) =>
+          list.id === listId
+            ? {
+                ...list,
+                todoItems: [
+                  ...list.todoItems,
+                  { id: 'temp' as unknown as number, name: input.name, done: false, order: list.todoItems.length },
+                ],
+              }
+            : list,
+        ),
+      );
+      return { prev };
+    },
+    onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev),
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
