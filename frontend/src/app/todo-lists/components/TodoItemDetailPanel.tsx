@@ -35,7 +35,7 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (mode === 'edit') {
-      onUpdate(item.id, { name, description: description || undefined });
+      onUpdate(item.id, { name, description: description.trim() || undefined });
       handleClose();
     }
   };
