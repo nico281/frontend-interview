@@ -8,11 +8,8 @@ RUN npm install
 
 COPY . .
 
-# Set API URL as build arg and environment variable for Vite
-ARG VITE_API_URL=https://todos-api-2ott.onrender.com/api
-ENV VITE_API_URL=${VITE_API_URL}
-
-RUN npm run build
+# Build with API URL - Vite reads this at build time
+RUN VITE_API_URL=https://todos-api-2ott.onrender.com/api npm run build
 
 FROM node:20.12.0
 
