@@ -2,8 +2,7 @@
 
 Full-stack Todo List app with CRUD, drag & drop reordering, and dark mode.
 
-## Demo 
-frontend-f0ht.onrender.com
+Demo: frontend-f0ht.onrender.com
 
 ## Stack
 
