@@ -122,7 +122,15 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
               Cancel
             </button>
             <button
-              type="submit"
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                const syntheticEvent = new Event('submit', { bubbles: true, cancelable: true }) as unknown as FormEvent<HTMLFormElement>;
+                Object.defineProperty(syntheticEvent, 'target', { value: e.currentTarget.closest('form') });
+                Object.defineProperty(syntheticEvent, 'preventDefault', { value: () => {} });
+                onUpdate(item.id, { name, description: description || undefined });
+                handleClose();
+              }}
               className="px-4 py-2 bg-neutral-900 dark:bg-neutral-200 text-white dark:text-neutral-900 text-sm rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-300"
             >
               Save Changes
