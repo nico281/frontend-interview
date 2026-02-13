@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-# Use Render environment variable if available, else default to production backend
+# Use Render environment variable if available, else default to production backend with /api
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL:-https://todos-api-2ott.onrender.com/api}
 
