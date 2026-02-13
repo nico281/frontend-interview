@@ -1,35 +1,40 @@
+# Todo List App
 
-# frontend-interview
+Full-stack Todo List app with CRUD, drag & drop reordering, and dark mode.
 
-This repository contains a simple Todo List API built with NestJS and TypeScript, along with a React Vite project scaffold.
+## Stack
 
-## Project Structure
+**Backend**: NestJS • Swagger • Class Validator • Jest
 
-```plaintext
-.
-├── backend/        # NestJS-based Todo List API
-└── frontend/       # React Vite scaffold for the Todo List UI
-```
+**Frontend**: React 19 • Vite • TypeScript • TanStack Query • TailwindCSS • @dnd-kit
 
-### Backend
+## Features
 
-The backend API is responsible for handling the Todo List's CRUD operations and is already running. Candidates can use the provided endpoints to manage their Todo List data in the frontend application.
+- Complete CRUD for Todo Lists and Items
+- Drag & drop reordering
+- Inline editing
+- Dark/Light theme toggle
+- Responsive design
+- Optimistic UI updates (no wait for backend)
 
-- **API Documentation**: Available at `http://localhost:4000/api/docs`
+## Backend Changes
 
-### Frontend
+> Note: Backend was modified to add reordering support (not part of original scope)
 
-The frontend is a simple React application using Vite as the build tool. Candidates are expected to build a Todo List UI by consuming the provided API. The scaffold includes basic setup and configurations to get started quickly.
-
-### Installation
-
-This project provides a development environment using **devContainers**. Open the repository in a devContainer using your preferred IDE (e.g., VS Code). The devContainer will have all dependencies pre-installed.
-
-## Running the app
+## Installation
 
 ```bash
-# development
-$ npm run dev
+pnpm install
+pnpm dev
+```
+
+**API Docs**: http://localhost:4000/api/docs
+
+## Structure
+
+```
+├── backend/          # NestJS API
+└── frontend/         # React Vite
 ```
 
 ## Contact
@@ -41,4 +46,3 @@ $ npm run dev
 ![crunchloop](https://s3.amazonaws.com/crunchloop.io/logo-blue.png)
 
 We strongly believe in giving back :rocket:. Let's work together [`Get in touch`](https://crunchloop.io/#contact).
-
