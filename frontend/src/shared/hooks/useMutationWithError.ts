@@ -1,9 +1,7 @@
-import { type UseMutationResult, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-export function useMutationWithError<TData, TError, TVariables, TContext>(
-  options: Parameters<typeof useMutation<TData, TError, TVariables, TContext>>[0] & { errorMessage?: string },
-): UseMutationResult<TData, TError, TVariables, TContext> {
+export function useMutationWithError(options: Parameters<typeof useMutation>[0] & { errorMessage?: string }) {
   const { errorMessage = 'Something went wrong', ...mutationOptions } = options;
 
   return useMutation({
