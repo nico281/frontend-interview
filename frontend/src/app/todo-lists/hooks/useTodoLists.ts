@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
 import { reorderItemInList } from '@/shared/utils/arrayUtils';
 import * as api from '../services/api';

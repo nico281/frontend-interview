@@ -73,7 +73,7 @@ export default function TodoListsApp() {
             </div>
           ) : (
             <div className="space-y-4">
-              {lists.data?.map((list, index) => {
+              {lists.data?.map((list: any, index: number) => {
                 const isLast = index === (lists.data?.length ?? 0) - 1;
                 return (
                   <TodoList
@@ -86,7 +86,7 @@ export default function TodoListsApp() {
                     onDeleteList={() => setDeleteConfirmList(list.id)}
                     onCreateItem={(name) => createItem.mutate({ listId: list.id, input: { name } })}
                     onToggleItem={(itemId) => {
-                      const item = lists.data?.find((l) => l.id === list.id)?.todoItems.find((i) => i.id === itemId);
+                      const item = lists.data?.find((l: any) => l.id === list.id)?.todoItems.find((i: any) => i.id === itemId);
                       updateItem.mutate({
                         listId: list.id,
                         itemId,
