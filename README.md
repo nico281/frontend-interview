@@ -2,12 +2,6 @@
 
 Full-stack Todo List app with CRUD, drag & drop reordering, and dark mode.
 
-## Stack
-
-**Backend**: NestJS • Swagger • Class Validator • Jest
-
-**Frontend**: React 19 • Vite • TypeScript • TanStack Query • TailwindCSS • @dnd-kit
-
 ## Features
 
 - Complete CRUD for Todo Lists and Items
@@ -16,6 +10,24 @@ Full-stack Todo List app with CRUD, drag & drop reordering, and dark mode.
 - Dark/Light theme toggle
 - Responsive design
 - Optimistic UI updates (no wait for backend)
+
+## Stack
+
+**Backend**: NestJS • Swagger • Class Validator • Jest
+                                                                                                                                                                                                                                                               
+**Frontend**                                                                                                                                                
+                                                      
+- TanStack Query - Server state management with caching and optimistic updates                                                                          
+- @dnd-kit - Drag & drop for reordering items       
+- Biome - Linting and formatting
+- TailwindCSS - Styling with dark mode
+- Lucide React - Icons
+
+## Technical decisions
+
+- TanStack Query: For server state management with automatic cache and optimistic updates
+- @dnd-kit: For performant and accessible drag & drop implementation
+- Biome: Unified linting and formatting tool
 
 ## Development
 
