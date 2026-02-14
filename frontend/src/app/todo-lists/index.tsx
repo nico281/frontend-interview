@@ -62,7 +62,15 @@ export default function TodoListsApp() {
               <p className="mt-4 text-neutral-600 dark:text-neutral-400 text-sm">Loading...</p>
             </div>
           ) : lists.error ? (
-            <p className="text-red-600">Error: {(lists.error as Error).message}</p>
+            <div className="flex flex-col items-center justify-center py-12 gap-4">
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm">Failed to load</p>
+              <button
+                onClick={() => lists.refetch()}
+                className="px-4 py-2 text-sm bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 rounded-lg hover:bg-neutral-700 dark:hover:bg-neutral-300"
+              >
+                Retry
+              </button>
+            </div>
           ) : (
             <div className="space-y-4">
               {lists.data?.map((list, index) => {

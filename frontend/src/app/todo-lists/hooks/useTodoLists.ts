@@ -1,5 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { reorderItemInList } from '@/shared/utils/arrayUtils';
+import { useQueryWithError } from '@/shared/hooks/useQueryWithError';
+import { useMutationWithError } from '@/shared/hooks/useMutationWithError';
 import * as api from '../services/api';
 import type { CreateItemInput, CreateListInput, UpdateItemInput, UpdateListInput } from '../types';
 import type { TodoList as TodoListType, TodoItem as TodoItemType } from '../types';
@@ -9,12 +11,14 @@ const queryKey = ['todo-lists'];
 export function useTodoLists() {
   const queryClient = useQueryClient();
 
-  const lists = useQuery({
+  const lists = useQueryWithError({
     queryKey,
     queryFn: api.getTodoLists,
+    errorMessage: 'Failed to load lists',
   });
 
-  const createList = useMutation({
+  const createList = useMutationWithError({
+    errorMessage: 'Failed to create list',
     mutationFn: (input: CreateListInput) => api.createTodoList(input),
     onMutate: async (input) => {
       await queryClient.cancelQueries({ queryKey });
@@ -29,7 +33,8 @@ export function useTodoLists() {
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
-  const updateList = useMutation({
+  const updateList = useMutationWithError({
+    errorMessage: 'Failed to update list',
     mutationFn: ({ id, input }: { id: number; input: UpdateListInput }) => api.updateTodoList(id, input),
     onMutate: async ({ id, input }) => {
       await queryClient.cancelQueries({ queryKey });
@@ -43,7 +48,8 @@ export function useTodoLists() {
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
-  const deleteList = useMutation({
+  const deleteList = useMutationWithError({
+    errorMessage: 'Failed to delete list',
     mutationFn: (id: number) => api.deleteTodoList(id),
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey });
@@ -57,7 +63,8 @@ export function useTodoLists() {
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
-  const createItem = useMutation({
+  const createItem = useMutationWithError({
+    errorMessage: 'Failed to create task',
     mutationFn: ({ listId, input }: { listId: number; input: CreateItemInput }) => api.createTodoItem(listId, input),
     onMutate: async ({ listId, input }) => {
       await queryClient.cancelQueries({ queryKey });
@@ -81,7 +88,8 @@ export function useTodoLists() {
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
-  const updateItem = useMutation({
+  const updateItem = useMutationWithError({
+    errorMessage: 'Failed to update task',
     mutationFn: ({ listId, itemId, input }: { listId: number; itemId: number; input: UpdateItemInput }) =>
       api.updateTodoItem(listId, itemId, input),
     onMutate: async ({ listId, itemId, input }) => {
@@ -105,7 +113,8 @@ export function useTodoLists() {
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
-  const deleteItem = useMutation({
+  const deleteItem = useMutationWithError({
+    errorMessage: 'Failed to delete task',
     mutationFn: ({ listId, itemId }: { listId: number; itemId: number }) => api.deleteTodoItem(listId, itemId),
     onMutate: async ({ listId, itemId }) => {
       await queryClient.cancelQueries({ queryKey });
@@ -123,11 +132,12 @@ export function useTodoLists() {
       return { prev };
     },
     onError: (_, __, context) => queryClient.setQueryData(queryKey, context?.prev),
+    onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
-  const reorderItem = useMutation({
+  const reorderItem = useMutationWithError({
+    errorMessage: 'Failed to reorder tasks',
     mutationFn: async ({ listId, itemId, newOrder }: { listId: number; itemId: number; newOrder: number }) => {
-      // Calculate new item IDs order
       const lists = queryClient.getQueryData<TodoListType[]>(queryKey);
       const reorderedLists = reorderItemInList(lists || [], listId, itemId, newOrder);
       const updatedList = reorderedLists?.find((l) => l.id === listId);
@@ -139,7 +149,6 @@ export function useTodoLists() {
     onMutate: ({ listId, itemId, newOrder }) => {
       queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
-      // Update optimistically
       queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
         reorderItemInList(old || [], listId, itemId, newOrder),
       );

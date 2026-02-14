@@ -10,6 +10,7 @@ Full-stack Todo List app with CRUD, drag & drop reordering, and dark mode.
 - Dark/Light theme toggle
 - Responsive design
 - Optimistic UI updates (no wait for backend)
+- Global error handling with toast notifications
 
 ## Stack
 
@@ -40,11 +41,20 @@ Full-stack Todo List app with CRUD, drag & drop reordering, and dark mode.
 ## Installation
 
 ```bash
-pnpm install
-pnpm dev
+bun install
+bun dev
 ```
 
 **API Docs**: http://localhost:4000/api/docs
+
+## CI/CD
+
+Tests run automatically on every push and PR via GitHub Actions:
+
+- Frontend: unit tests + linting
+- Backend: unit tests + linting
+
+Checks appear in the PR section and must pass before merging.
 
 ## Deployment
 
