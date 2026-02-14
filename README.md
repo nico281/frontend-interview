@@ -50,8 +50,7 @@ pnpm dev
 
 Demo: [frontend-f0ht.onrender.com](https://frontend-f0ht.onrender.com)
 
-Note: La demo puede demorar unos segundos en la primera carga ya que el backend y frontend están en servicios gratuitos que entran en "cold start"      
-  cuando no han recibido tráfico por un tiempo. 
+Note: The demo may take a few seconds on the first load, as the backend and frontend are hosted on free-tier services that go into a "cold start" when they haven't received traffic for a while.
   
 ### Deploy on Render (Free)
 
