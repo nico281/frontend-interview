@@ -1,4 +1,4 @@
-import { render, waitFor, cleanup } from '@testing-library/react';
+import { render, cleanup, screen } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ThemeProvider, useTheme } from './ThemeContext';
 
@@ -40,6 +40,7 @@ describe('ThemeContext', () => {
   beforeEach(() => {
     localStorage.clear();
     document.documentElement.classList.remove('dark');
+    matchMediaMock.mockReturnValue({ matches: false, media: '', addEventListener: () => {}, removeEventListener: () => {} });
   });
 
   afterEach(() => {
@@ -47,86 +48,75 @@ describe('ThemeContext', () => {
   });
 
   it('should use light theme by default when no preference', async () => {
-    matchMediaMock.mockReturnValue({ matches: false, media: '', addEventListener: () => {}, removeEventListener: () => {} });
-
-    let theme: string | null = null;
-
     render(
       <ThemeProvider>
-        <TestComponent setter={(t) => (theme = t)} />
+        <TestComponent />
       </ThemeProvider>,
     );
 
-    await waitFor(() => expect(theme).toBe('light'));
+    expect(await screen.findByText('theme: light')).toBeInTheDocument();
   });
 
   it('should use system dark preference when no localStorage', async () => {
     matchMediaMock.mockReturnValue({ matches: true, media: '', addEventListener: () => {}, removeEventListener: () => {} });
 
-    let theme: string | null = null;
-
     render(
       <ThemeProvider>
-        <TestComponent setter={(t) => (theme = t)} />
+        <TestComponent />
       </ThemeProvider>,
     );
 
-    await waitFor(() => expect(theme).toBe('dark'));
+    expect(await screen.findByText('theme: dark')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 
   it('should load theme from localStorage', async () => {
     localStorage.setItem('theme', 'dark');
 
-    let theme: string | null = null;
-
     render(
       <ThemeProvider>
-        <TestComponent setter={(t) => (theme = t)} />
+        <TestComponent />
       </ThemeProvider>,
     );
 
-    await waitFor(() => expect(theme).toBe('dark'));
+    expect(await screen.findByText('theme: dark')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 
   it('should toggle theme and persist to localStorage', async () => {
-    let themeResult: { theme: string; toggleTheme: () => void } | null = null;
-
     render(
       <ThemeProvider>
-        <TestComponentWithToggle setter={(t) => (themeResult = t)} />
+        <TestComponentWithToggle />
       </ThemeProvider>,
     );
 
-    await waitFor(() => expect(themeResult?.theme).toBe('light'));
+    expect(await screen.findByText('theme: light')).toBeInTheDocument();
 
-    themeResult!.toggleTheme();
+    screen.getByText('toggle').click();
 
-    await waitFor(() => expect(themeResult?.theme).toBe('dark'));
+    expect(await screen.findByText('theme: dark')).toBeInTheDocument();
     expect(localStorage.getItem('theme')).toBe('dark');
     expect(document.documentElement.classList.contains('dark')).toBe(true);
 
-    themeResult!.toggleTheme();
+    screen.getByText('toggle').click();
 
-    await waitFor(() => expect(themeResult?.theme).toBe('light'));
+    expect(await screen.findByText('theme: light')).toBeInTheDocument();
     expect(localStorage.getItem('theme')).toBe('light');
     expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 });
 
-function TestComponent({ setter }: { setter: (theme: string) => void }) {
+function TestComponent() {
   const { theme } = useTheme();
-  setter(theme);
-  return null;
+  return <span>theme: {theme}</span>;
 }
 
-function TestComponentWithToggle({
-  setter,
-}: {
-  setter: (result: { theme: string; toggleTheme: () => void }) => void;
-}) {
+function TestComponentWithToggle() {
   const { theme, toggleTheme } = useTheme();
-  setter({ theme, toggleTheme });
-  return null;
+  return (
+    <div>
+      <span>theme: {theme}</span>
+      <button onClick={toggleTheme}>toggle</button>
+    </div>
+  );
 }
