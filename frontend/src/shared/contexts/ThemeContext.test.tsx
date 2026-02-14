@@ -1,5 +1,5 @@
-import { render, waitFor } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, waitFor, cleanup } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ThemeProvider, useTheme } from './ThemeContext';
 
 const localStorageMock = (() => {
@@ -20,17 +20,20 @@ const localStorageMock = (() => {
 
 vi.stubGlobal('localStorage', localStorageMock);
 
+const matchMediaMock = vi.fn();
+matchMediaMock.mockImplementation((query: string) => ({
+  matches: false,
+  media: query,
+  addEventListener: () => {},
+  removeEventListener: () => {},
+  onchange: null,
+  addListener: () => {},
+  removeListener: () => {},
+  dispatchEvent: () => {},
+}));
+
 vi.stubGlobal('window', {
-  matchMedia: (query: string) => ({
-    matches: false,
-    media: query,
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    onchange: null,
-    addListener: () => {},
-    removeListener: () => {},
-    dispatchEvent: () => {},
-  }),
+  matchMedia: matchMediaMock,
 });
 
 describe('ThemeContext', () => {
@@ -39,7 +42,13 @@ describe('ThemeContext', () => {
     document.documentElement.classList.remove('dark');
   });
 
+  afterEach(() => {
+    cleanup();
+  });
+
   it('should use light theme by default when no preference', async () => {
+    matchMediaMock.mockReturnValue({ matches: false, media: '', addEventListener: () => {}, removeEventListener: () => {} });
+
     let theme: string | null = null;
 
     render(
@@ -52,18 +61,7 @@ describe('ThemeContext', () => {
   });
 
   it('should use system dark preference when no localStorage', async () => {
-    vi.stubGlobal('window', {
-      matchMedia: (query: string) => ({
-        matches: true,
-        media: query,
-        addEventListener: () => {},
-        removeEventListener: () => {},
-        onchange: null,
-        addListener: () => {},
-        removeListener: () => {},
-        dispatchEvent: () => {},
-      }),
-    });
+    matchMediaMock.mockReturnValue({ matches: true, media: '', addEventListener: () => {}, removeEventListener: () => {} });
 
     let theme: string | null = null;
 
@@ -101,7 +99,7 @@ describe('ThemeContext', () => {
       </ThemeProvider>,
     );
 
-    await waitFor(() => themeResult?.theme === 'light');
+    await waitFor(() => expect(themeResult?.theme).toBe('light'));
 
     themeResult!.toggleTheme();
 

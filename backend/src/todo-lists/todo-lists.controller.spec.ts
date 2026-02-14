@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TodoListsController } from './todo-lists.controller';
+import { TodoListsService } from './todo-lists.service';
 
 describe('TodoListsController', () => {
   let controller: TodoListsController;
@@ -7,6 +8,21 @@ describe('TodoListsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TodoListsController],
+      providers: [
+        {
+          provide: TodoListsService,
+          useValue: {
+            findAll: () => [],
+            create: () => ({}),
+            update: () => ({}),
+            remove: () => ({}),
+            createItem: () => ({}),
+            updateItem: () => ({}),
+            removeItem: () => ({}),
+            reorderItems: () => [],
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<TodoListsController>(TodoListsController);
