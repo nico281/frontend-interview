@@ -2,6 +2,9 @@
 
 Collection of prompts used during development (for reference).
 
+## Plan
+``` Make a plan to create an Todo app. The app will contain lists of todoItems. The user will have the capability to add new lists and on each list will have the feature to add todoItems. the items can be dragged and move between the other items but not between lists. the user will have the capability of CRUD lists and lists items. use tanstack query and axios to deal with data management. The app needs to be mobile first```
+
 ## Theme / Dark Mode
 
 ```
