@@ -126,7 +126,9 @@ function TestComponentWithToggle() {
   return (
     <div>
       <span>theme: {theme}</span>
-      <button type="button" onClick={toggleTheme}>toggle</button>
+      <button type="button" onClick={toggleTheme}>
+        toggle
+      </button>
     </div>
   );
 }

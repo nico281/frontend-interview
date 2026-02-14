@@ -21,7 +21,8 @@
         "noNonNullAssertion": "off"
       },
       "correctness": {
-        "noUnusedImports": "off"
+        "noUnusedImports": "off",
+        "useExhaustiveDependencies": "off"
       },
       "suspicious": {
         "noUnknownAtRules": "off"
