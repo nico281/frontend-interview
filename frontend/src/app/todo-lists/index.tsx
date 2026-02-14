@@ -76,30 +76,30 @@ export default function TodoListsApp() {
               {lists.data?.map((list, index) => {
                 const isLast = index === (lists.data?.length ?? 0) - 1;
                 return (
-                <TodoList
-                  key={list.id}
-                  list={list}
-                  scrollContainerRef={isLast ? scrollContainerRef : undefined}
-                  style={{ animationDelay: `${index * 50}ms` }}
-                  className="animate-fade-in-up opacity-0"
-                  onUpdateList={(name) => updateList.mutate({ id: list.id, input: { name } })}
-                  onDeleteList={() => setDeleteConfirmList(list.id)}
-                  onCreateItem={(name) => createItem.mutate({ listId: list.id, input: { name } })}
-                  onToggleItem={(itemId) => {
-                    const item = lists.data?.find((l) => l.id === list.id)?.todoItems.find((i) => i.id === itemId);
-                    updateItem.mutate({
-                      listId: list.id,
-                      itemId,
-                      input: { done: !item?.done },
-                    });
-                  }}
-                  onDeleteItem={(itemId) => {
-                    deleteItem.mutate({ listId: list.id, itemId });
-                  }}
-                  onReorderItem={(itemId, newOrder) => reorderItem.mutate({ listId: list.id, itemId, newOrder })}
-                  onUpdateItem={(itemId, input) => updateItem.mutate({ listId: list.id, itemId, input })}
-                />
-              );
+                  <TodoList
+                    key={list.id}
+                    list={list}
+                    scrollContainerRef={isLast ? scrollContainerRef : undefined}
+                    style={{ animationDelay: `${index * 50}ms` }}
+                    className="animate-fade-in-up opacity-0"
+                    onUpdateList={(name) => updateList.mutate({ id: list.id, input: { name } })}
+                    onDeleteList={() => setDeleteConfirmList(list.id)}
+                    onCreateItem={(name) => createItem.mutate({ listId: list.id, input: { name } })}
+                    onToggleItem={(itemId) => {
+                      const item = lists.data?.find((l) => l.id === list.id)?.todoItems.find((i) => i.id === itemId);
+                      updateItem.mutate({
+                        listId: list.id,
+                        itemId,
+                        input: { done: !item?.done },
+                      });
+                    }}
+                    onDeleteItem={(itemId) => {
+                      deleteItem.mutate({ listId: list.id, itemId });
+                    }}
+                    onReorderItem={(itemId, newOrder) => reorderItem.mutate({ listId: list.id, itemId, newOrder })}
+                    onUpdateItem={(itemId, input) => updateItem.mutate({ listId: list.id, itemId, input })}
+                  />
+                );
               })}
             </div>
           )}

@@ -27,7 +27,7 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item, isClosing]);
 
   if (!item) return null;
@@ -60,7 +60,11 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
           <h2 id="panel-title" className="text-lg font-semibold text-neutral-900 dark:text-white">
             {isViewMode ? 'Task Details' : 'Edit Task'}
           </h2>
-          <button onClick={handleClose} className="text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-white" aria-label="Close panel">
+          <button
+            onClick={handleClose}
+            className="text-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+            aria-label="Close panel"
+          >
             <X size={20} />
           </button>
         </div>
@@ -84,7 +88,10 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
         ) : (
           <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
             <div>
-              <label htmlFor="task-name" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label
+                htmlFor="task-name"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2"
+              >
                 Name
               </label>
               <input
@@ -97,7 +104,10 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
             </div>
 
             <div>
-              <label htmlFor="task-description" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label
+                htmlFor="task-description"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2"
+              >
                 Description
               </label>
               <textarea
@@ -125,7 +135,10 @@ export function TodoItemDetailPanel({ item, onClose, onUpdate, mode }: TodoItemD
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                const syntheticEvent = new Event('submit', { bubbles: true, cancelable: true }) as unknown as FormEvent<HTMLFormElement>;
+                const syntheticEvent = new Event('submit', {
+                  bubbles: true,
+                  cancelable: true,
+                }) as unknown as FormEvent<HTMLFormElement>;
                 Object.defineProperty(syntheticEvent, 'target', { value: e.currentTarget.closest('form') });
                 Object.defineProperty(syntheticEvent, 'preventDefault', { value: () => {} });
                 onUpdate(item.id, { name, description: description || undefined });

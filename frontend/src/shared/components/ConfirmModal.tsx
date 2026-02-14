@@ -1,5 +1,5 @@
+import { X } from 'lucide-react';
 import { type FormEvent, useEffect, useState } from 'react';
-import { X } from "lucide-react";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -10,14 +10,7 @@ interface ConfirmModalProps {
   onCancel: () => void;
 }
 
-export function ConfirmModal({
-  isOpen,
-  title,
-  message,
-  confirmLabel,
-  onConfirm,
-  onCancel,
-}: ConfirmModalProps) {
+export function ConfirmModal({ isOpen, title, message, confirmLabel, onConfirm, onCancel }: ConfirmModalProps) {
   const [isClosing, setIsClosing] = useState(false);
 
   const handleCancel = () => {
@@ -41,14 +34,19 @@ export function ConfirmModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
+      <button
+        type="button"
         className={`absolute inset-0 bg-black/50 ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
         onClick={handleCancel}
+        aria-label="Close modal"
       />
-      <div className={`relative bg-white dark:bg-neutral-800 rounded-xl shadow-lg max-w-md w-full mx-4 p-6 ${
-        isClosing ? 'animate-modal-out' : 'animate-modal-in'
-      }`}>
+      <div
+        className={`relative bg-white dark:bg-neutral-800 rounded-xl shadow-lg max-w-md w-full mx-4 p-6 ${
+          isClosing ? 'animate-modal-out' : 'animate-modal-in'
+        }`}
+      >
         <button
+          type="button"
           onClick={handleCancel}
           className="absolute top-4 right-4 text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300"
         >

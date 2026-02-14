@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { arrayMove, reorderItemInList } from './arrayUtils';
 import type { TodoList } from '@/app/todo-lists/types';
+import { arrayMove, reorderItemInList } from './arrayUtils';
 
 describe('arrayMove', () => {
   it('moves item from index 0 to index 2', () => {

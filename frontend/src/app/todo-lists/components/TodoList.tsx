@@ -1,4 +1,3 @@
-import { ConfirmModal } from "@/shared/components/ConfirmModal";
 import {
   closestCenter,
   DndContext,
@@ -7,20 +6,14 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { ClipboardList, Edit, Plus, Trash2 } from "lucide-react";
-import { type FormEvent, useEffect, useRef, useState } from "react";
-import type {
-  TodoItem as TodoItemType,
-  TodoList as TodoListType,
-} from "../types";
-import { TodoItem } from "./TodoItem";
-import { TodoItemDetailPanel } from "./TodoItemDetailPanel";
+} from '@dnd-kit/core';
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { ClipboardList, Edit, Plus, Trash2 } from 'lucide-react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
+import { ConfirmModal } from '@/shared/components/ConfirmModal';
+import type { TodoItem as TodoItemType, TodoList as TodoListType } from '../types';
+import { TodoItem } from './TodoItem';
+import { TodoItemDetailPanel } from './TodoItemDetailPanel';
 
 interface TodoListProps {
   list: TodoListType;
@@ -30,10 +23,7 @@ interface TodoListProps {
   onToggleItem: (itemId: number) => void;
   onDeleteItem: (itemId: number) => void;
   onReorderItem: (itemId: number, newOrder: number) => void;
-  onUpdateItem: (
-    itemId: number,
-    input: { name?: string; description?: string; done?: boolean },
-  ) => void;
+  onUpdateItem: (itemId: number, input: { name?: string; description?: string; done?: boolean }) => void;
   onViewItem?: (itemId: number) => void;
   scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
   className?: string;
@@ -53,13 +43,12 @@ export function TodoList({
   style,
   scrollContainerRef,
 }: TodoListProps) {
-  const [newItemName, setNewItemName] = useState("");
+  const [newItemName, setNewItemName] = useState('');
   const [selectedItem, setSelectedItem] = useState<TodoItemType | null>(null);
-  const [panelMode, setPanelMode] = useState<"view" | "edit">("view");
+  const [panelMode, setPanelMode] = useState<'view' | 'edit'>('view');
   const [isEditingName, setIsEditingName] = useState(false);
-  const [editedName, setEditedName] = useState("");
-  const [deleteConfirmItem, setDeleteConfirmItem] =
-    useState<TodoItemType | null>(null);
+  const [editedName, setEditedName] = useState('');
+  const [deleteConfirmItem, setDeleteConfirmItem] = useState<TodoItemType | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -85,7 +74,7 @@ export function TodoList({
     e.preventDefault();
     if (newItemName.trim()) {
       onCreateItem(newItemName.trim());
-      setNewItemName("");
+      setNewItemName('');
       if (scrollContainerRef) {
         setTimeout(() => {
           const container = scrollContainerRef.current;
@@ -121,13 +110,13 @@ export function TodoList({
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isEditingName) {
+      if (e.key === 'Escape' && isEditingName) {
         setIsEditingName(false);
-        setEditedName("");
+        setEditedName('');
       }
     };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
   }, [isEditingName]);
 
   return (
@@ -154,7 +143,7 @@ export function TodoList({
                 onChange={(e) => setEditedName(e.target.value)}
                 onBlur={handleSaveName}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === 'Enter') {
                     e.preventDefault();
                     handleSaveName();
                   }
@@ -187,32 +176,21 @@ export function TodoList({
         </div>
 
         <div className="p-5">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <ul className="space-y-2 mb-4" data-items-container>
-              <SortableContext
-                items={sortableItemIds}
-                strategy={verticalListSortingStrategy}
-              >
+              <SortableContext items={sortableItemIds} strategy={verticalListSortingStrategy}>
                 {list.todoItems.map((item) => (
                   <TodoItem
                     key={item.id}
                     item={item}
                     onToggle={onToggleItem}
                     onView={(id) => {
-                      setSelectedItem(
-                        list.todoItems.find((i) => i.id === id) || null,
-                      );
-                      setPanelMode("view");
+                      setSelectedItem(list.todoItems.find((i) => i.id === id) || null);
+                      setPanelMode('view');
                     }}
                     onEdit={(id) => {
-                      setSelectedItem(
-                        list.todoItems.find((i) => i.id === id) || null,
-                      );
-                      setPanelMode("edit");
+                      setSelectedItem(list.todoItems.find((i) => i.id === id) || null);
+                      setPanelMode('edit');
                     }}
                     onDelete={(id) => {
                       const item = list.todoItems.find((i) => i.id === id);

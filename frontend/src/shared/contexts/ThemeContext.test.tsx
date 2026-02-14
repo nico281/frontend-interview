@@ -1,5 +1,5 @@
-import { render, cleanup, screen } from '@testing-library/react';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { cleanup, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider, useTheme } from './ThemeContext';
 
 const localStorageMock = (() => {
@@ -40,7 +40,12 @@ describe('ThemeContext', () => {
   beforeEach(() => {
     localStorage.clear();
     document.documentElement.classList.remove('dark');
-    matchMediaMock.mockReturnValue({ matches: false, media: '', addEventListener: () => {}, removeEventListener: () => {} });
+    matchMediaMock.mockReturnValue({
+      matches: false,
+      media: '',
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    });
   });
 
   afterEach(() => {
@@ -58,7 +63,12 @@ describe('ThemeContext', () => {
   });
 
   it('should use system dark preference when no localStorage', async () => {
-    matchMediaMock.mockReturnValue({ matches: true, media: '', addEventListener: () => {}, removeEventListener: () => {} });
+    matchMediaMock.mockReturnValue({
+      matches: true,
+      media: '',
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    });
 
     render(
       <ThemeProvider>
@@ -116,7 +126,7 @@ function TestComponentWithToggle() {
   return (
     <div>
       <span>theme: {theme}</span>
-      <button onClick={toggleTheme}>toggle</button>
+      <button type="button" onClick={toggleTheme}>toggle</button>
     </div>
   );
 }

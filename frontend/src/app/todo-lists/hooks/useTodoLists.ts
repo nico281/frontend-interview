@@ -1,10 +1,16 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { reorderItemInList } from '@/shared/utils/arrayUtils';
-import { useQueryWithError } from '@/shared/hooks/useQueryWithError';
 import { useMutationWithError } from '@/shared/hooks/useMutationWithError';
+import { useQueryWithError } from '@/shared/hooks/useQueryWithError';
+import { reorderItemInList } from '@/shared/utils/arrayUtils';
 import * as api from '../services/api';
-import type { CreateItemInput, CreateListInput, UpdateItemInput, UpdateListInput } from '../types';
-import type { TodoList as TodoListType, TodoItem as TodoItemType } from '../types';
+import type {
+  CreateItemInput,
+  CreateListInput,
+  TodoItem as TodoItemType,
+  TodoList as TodoListType,
+  UpdateItemInput,
+  UpdateListInput,
+} from '../types';
 
 const queryKey = ['todo-lists'];
 
