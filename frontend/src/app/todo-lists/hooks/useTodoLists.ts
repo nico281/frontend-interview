@@ -34,11 +34,10 @@ export function useTodoLists() {
       return { prev, tempId };
     },
     onSuccess: (newList, _variables, context) => {
-      // Filter out temp and add the real one - more explicit than map/replace
-      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) => [
-        ...(old || []).filter((list) => String(list.id) !== String(context?.tempId)),
-        newList,
-      ]);
+      // Replace temp with real list in-place to maintain position and avoid re-mount
+      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
+        (old || []).map((list) => (String(list.id) === String(context?.tempId) ? newList : list)),
+      );
     },
     onError: (_error, _variables, context) => {
       queryClient.setQueryData(queryKey, context?.prev);
