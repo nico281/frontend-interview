@@ -26,17 +26,22 @@ export function useTodoLists() {
     onMutate: async (input) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
+      const tempId = `temp-${crypto.randomUUID()}`;
       queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) => [
         ...(old || []),
-        { id: 'temp', name: input.name, todoItems: [] },
+        { id: tempId, name: input.name, todoItems: [] },
       ]);
-      return { prev };
+      return { prev, tempId };
+    },
+    onSuccess: (newList, _variables, context) => {
+      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
+        old?.map((list) => (list.id === context?.tempId ? newList : list)),
+      );
     },
     onError: (_error, _variables, context) => {
       queryClient.setQueryData(queryKey, context?.prev);
       toast.error('Failed to create list');
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const updateList = useMutation({
