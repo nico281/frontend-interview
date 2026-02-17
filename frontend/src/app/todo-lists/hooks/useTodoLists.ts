@@ -26,7 +26,7 @@ export function useTodoLists() {
     onMutate: async (input) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
-      const tempId = `temp-${crypto.randomUUID()}` as unknown as number;
+      const tempId = `temp-${Date.now()}` as unknown as number;
       queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) => [
         ...(old || []),
         { id: tempId, name: input.name, todoItems: [] },
@@ -34,9 +34,11 @@ export function useTodoLists() {
       return { prev, tempId };
     },
     onSuccess: (newList, _variables, context) => {
-      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
-        old?.map((list) => (list.id === context?.tempId ? newList : list)),
-      );
+      // Filter out temp and add the real one - more explicit than map/replace
+      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) => [
+        ...(old || []).filter((list) => String(list.id) !== String(context?.tempId)),
+        newList,
+      ]);
     },
     onError: (_error, _variables, context) => {
       queryClient.setQueryData(queryKey, context?.prev);
