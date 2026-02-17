@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react';
-import { type FormEvent, useRef, useState } from 'react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
 import { ThemeToggle } from '@/shared/components/ThemeToggle';
 import { scrollToBottom } from '@/shared/utils/scrollUtils';
@@ -12,6 +12,14 @@ export default function TodoListsApp() {
   const [newListName, setNewListName] = useState('');
   const [deleteConfirmList, setDeleteConfirmList] = useState<number | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
+  // Mark initial load as complete after first successful data fetch
+  useEffect(() => {
+    if (lists.data && !initialLoadComplete) {
+      setInitialLoadComplete(true);
+    }
+  }, [lists.data, initialLoadComplete]);
 
   const handleCreateList = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -70,14 +78,15 @@ export default function TodoListsApp() {
           ) : (
             <div className="space-y-4">
               {lists.data?.map((list: TodoListType, index: number) => {
-                const isLast = index === (lists.data?.length ?? 0) - 1 && !createList.isPending;
+                const isLast = index === (lists.data?.length ?? 0) - 1;
+                const shouldAnimate = !initialLoadComplete;
                 return (
                   <TodoList
                     key={list.id}
                     list={list}
                     scrollContainerRef={isLast ? scrollContainerRef : undefined}
-                    style={undefined}
-                    className=""
+                    style={shouldAnimate ? { animationDelay: `${index * 50}ms` } : undefined}
+                    className={shouldAnimate ? 'animate-fade-in-up opacity-0' : ''}
                     onUpdateList={(name) => updateList.mutate({ id: list.id, input: { name } })}
                     onDeleteList={() => setDeleteConfirmList(list.id)}
                     onCreateItem={(name) => createItem.mutate({ listId: list.id, input: { name } })}
@@ -99,22 +108,6 @@ export default function TodoListsApp() {
                   />
                 );
               })}
-              {/* Optimistic UI: show pending list while creating */}
-              {createList.isPending && createList.variables && (
-                <TodoList
-                  key="pending-list"
-                  list={{ id: 'pending' as unknown as number, name: createList.variables.name, todoItems: [] }}
-                  scrollContainerRef={scrollContainerRef}
-                  className="opacity-70"
-                  onUpdateList={() => {}}
-                  onDeleteList={() => {}}
-                  onCreateItem={() => {}}
-                  onToggleItem={() => {}}
-                  onDeleteItem={() => {}}
-                  onReorderItem={() => {}}
-                  onUpdateItem={() => {}}
-                />
-              )}
             </div>
           )}
         </div>
