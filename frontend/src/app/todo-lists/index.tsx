@@ -70,15 +70,14 @@ export default function TodoListsApp() {
           ) : (
             <div className="space-y-4">
               {lists.data?.map((list: TodoListType, index: number) => {
-                const isLast = index === (lists.data?.length ?? 0) - 1;
-                const isTemp = String(list.id).startsWith('temp-');
+                const isLast = index === (lists.data?.length ?? 0) - 1 && !createList.isPending;
                 return (
                   <TodoList
                     key={list.id}
                     list={list}
                     scrollContainerRef={isLast ? scrollContainerRef : undefined}
-                    style={isTemp ? undefined : { animationDelay: `${index * 50}ms` }}
-                    className={isTemp ? '' : 'animate-fade-in-up opacity-0'}
+                    style={{ animationDelay: `${index * 50}ms` }}
+                    className="animate-fade-in-up opacity-0"
                     onUpdateList={(name) => updateList.mutate({ id: list.id, input: { name } })}
                     onDeleteList={() => setDeleteConfirmList(list.id)}
                     onCreateItem={(name) => createItem.mutate({ listId: list.id, input: { name } })}
@@ -100,6 +99,22 @@ export default function TodoListsApp() {
                   />
                 );
               })}
+              {/* Optimistic UI: show pending list while creating */}
+              {createList.isPending && createList.variables && (
+                <TodoList
+                  key="pending-list"
+                  list={{ id: 'pending' as unknown as number, name: createList.variables.name, todoItems: [] }}
+                  scrollContainerRef={scrollContainerRef}
+                  className="opacity-70"
+                  onUpdateList={() => {}}
+                  onDeleteList={() => {}}
+                  onCreateItem={() => {}}
+                  onToggleItem={() => {}}
+                  onDeleteItem={() => {}}
+                  onReorderItem={() => {}}
+                  onUpdateItem={() => {}}
+                />
+              )}
             </div>
           )}
         </div>
