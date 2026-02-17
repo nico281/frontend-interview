@@ -2,6 +2,7 @@ import { Plus } from 'lucide-react';
 import { type FormEvent, useRef, useState } from 'react';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
 import { ThemeToggle } from '@/shared/components/ThemeToggle';
+import { scrollToBottom } from '@/shared/utils/scrollUtils';
 import { TodoList } from './components/TodoList';
 import { useTodoLists } from './hooks/useTodoLists';
 
@@ -16,13 +17,7 @@ export default function TodoListsApp() {
     if (newListName.trim()) {
       createList.mutate({ name: newListName.trim() });
       setNewListName('');
-      // Always scroll to bottom when creating a new list
-      setTimeout(() => {
-        const container = scrollContainerRef.current;
-        if (container) {
-          container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-        }
-      }, 150);
+      scrollToBottom(scrollContainerRef);
     }
   };
 

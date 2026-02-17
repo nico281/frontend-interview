@@ -11,6 +11,7 @@ import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrate
 import { ClipboardList, Edit, Plus, Trash2 } from 'lucide-react';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
+import { scrollToBottom } from '@/shared/utils/scrollUtils';
 import type { TodoItem as TodoItemType, TodoList as TodoListType } from '../types';
 import { TodoItem } from './TodoItem';
 import { TodoItemDetailPanel } from './TodoItemDetailPanel';
@@ -76,15 +77,7 @@ export function TodoList({
       onCreateItem(newItemName.trim());
       setNewItemName('');
       if (scrollContainerRef) {
-        setTimeout(() => {
-          const container = scrollContainerRef.current;
-          if (container) {
-            const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 200;
-            if (isNearBottom) {
-              container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-            }
-          }
-        }, 150);
+        scrollToBottom(scrollContainerRef);
       }
     }
   };

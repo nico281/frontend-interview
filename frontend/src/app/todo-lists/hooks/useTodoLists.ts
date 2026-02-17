@@ -1,5 +1,6 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { reorderItemInList } from '@/shared/utils/arrayUtils';
 import * as api from '../services/api';
 import type {
@@ -32,7 +33,10 @@ export function useTodoLists() {
       ]);
       return { prev };
     },
-    onError: () => queryClient.setQueryData(queryKey, (old) => old),
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(queryKey, context?.prev);
+      toast.error('Failed to create list');
+    },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
@@ -46,7 +50,10 @@ export function useTodoLists() {
       );
       return { prev };
     },
-    onError: () => queryClient.setQueryData(queryKey, (old) => old),
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(queryKey, context?.prev);
+      toast.error('Failed to update list');
+    },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
@@ -60,7 +67,10 @@ export function useTodoLists() {
       );
       return { prev };
     },
-    onError: () => queryClient.setQueryData(queryKey, (old) => old),
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(queryKey, context?.prev);
+      toast.error('Failed to delete list');
+    },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
@@ -70,18 +80,30 @@ export function useTodoLists() {
     onMutate: async ({ listId, input }) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
-      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) => [
-        ...(old || []),
-        {
-          id: 'temp' as unknown as number,
-          name: input.name,
-          done: false,
-          order: old?.[listId]?.todoItems.length ?? 0,
-        },
-      ]);
+      queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
+        old?.map((list) =>
+          list.id === listId
+            ? {
+                ...list,
+                todoItems: [
+                  ...list.todoItems,
+                  {
+                    id: 'temp' as unknown as number,
+                    name: input.name,
+                    done: false,
+                    order: list.todoItems.length,
+                  },
+                ],
+              }
+            : list,
+        ),
+      );
       return { prev };
     },
-    onError: () => queryClient.setQueryData(queryKey, (old) => old),
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(queryKey, context?.prev);
+      toast.error('Failed to create task');
+    },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
@@ -94,15 +116,21 @@ export function useTodoLists() {
       queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
         old?.map((list: TodoListType) =>
           list.id === listId
-            ? list.todoItems.map((item: TodoItemType) =>
+            ? {
+                ...list,
+                todoItems: list.todoItems.map((item: TodoItemType) =>
                   item.id === itemId ? { ...item, ...input } : item,
-              )
+                ),
+              }
             : list,
         ),
       );
       return { prev };
     },
-    onError: () => queryClient.setQueryData(queryKey, (old) => old),
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(queryKey, context?.prev);
+      toast.error('Failed to update task');
+    },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
@@ -115,13 +143,19 @@ export function useTodoLists() {
       queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
         old?.map((list: TodoListType) =>
           list.id === listId
-            ? list.todoItems.filter((i: TodoItemType) => i.id !== itemId)
+            ? {
+                ...list,
+                todoItems: list.todoItems.filter((i: TodoItemType) => i.id !== itemId),
+              }
             : list,
         ),
       );
       return { prev };
     },
-    onError: () => queryClient.setQueryData(queryKey, (old) => old),
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(queryKey, context?.prev);
+      toast.error('Failed to delete task');
+    },
     onSettled: () => queryClient.invalidateQueries({ queryKey }),
   });
 
@@ -144,7 +178,10 @@ export function useTodoLists() {
       return { prev };
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
-    onError: () => queryClient.setQueryData(queryKey, (old) => old),
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(queryKey, context?.prev);
+      toast.error('Failed to reorder tasks');
+    },
   });
 
   return {

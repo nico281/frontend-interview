@@ -41,8 +41,8 @@ Full-stack Todo List app with CRUD, drag & drop reordering, and dark mode.
 ## Installation
 
 ```bash
-bun install
-bun dev
+pnpm install
+pnpm dev
 ```
 
 **API Docs**: http://localhost:4000/api/docs
