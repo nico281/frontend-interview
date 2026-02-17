@@ -76,8 +76,8 @@ export default function TodoListsApp() {
                     key={list.id}
                     list={list}
                     scrollContainerRef={isLast ? scrollContainerRef : undefined}
-                    style={{ animationDelay: `${index * 50}ms` }}
-                    className="animate-fade-in-up opacity-0"
+                    style={undefined}
+                    className=""
                     onUpdateList={(name) => updateList.mutate({ id: list.id, input: { name } })}
                     onDeleteList={() => setDeleteConfirmList(list.id)}
                     onCreateItem={(name) => createItem.mutate({ listId: list.id, input: { name } })}
