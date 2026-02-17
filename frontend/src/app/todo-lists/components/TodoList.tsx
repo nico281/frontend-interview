@@ -7,7 +7,12 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { ClipboardList, Edit, Plus, Trash2 } from 'lucide-react';
 import { type FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
@@ -50,8 +55,14 @@ export function TodoList({
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState('');
   const [deleteConfirmItem, setDeleteConfirmItem] = useState<TodoItemType | null>(null);
+  const [localItems, setLocalItems] = useState(list.todoItems);
   const listRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync local items when server data changes (but not during drag)
+  useEffect(() => {
+    setLocalItems(list.todoItems);
+  }, [list.todoItems]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -63,13 +74,17 @@ export function TodoList({
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      const newIndex = list.todoItems.findIndex((item) => item.id === over.id);
+      const oldIndex = localItems.findIndex((item) => item.id === active.id);
+      const newIndex = localItems.findIndex((item) => item.id === over.id);
+      // Update local state immediately (sync) to prevent flash
+      setLocalItems(arrayMove(localItems, oldIndex, newIndex));
+      // Then sync with server
       onReorderItem(Number(active.id), newIndex);
     }
   };
 
   // Memoize sortable items to prevent unnecessary re-renders
-  const sortableItemIds = useMemo(() => list.todoItems.map((i) => i.id), [list.todoItems]);
+  const sortableItemIds = useMemo(() => localItems.map((i) => i.id), [localItems]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -172,21 +187,21 @@ export function TodoList({
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <ul className="space-y-2 mb-4" data-items-container>
               <SortableContext items={sortableItemIds} strategy={verticalListSortingStrategy}>
-                {list.todoItems.map((item) => (
+                {localItems.map((item) => (
                   <TodoItem
                     key={item.id}
                     item={item}
                     onToggle={onToggleItem}
                     onView={(id) => {
-                      setSelectedItem(list.todoItems.find((i) => i.id === id) || null);
+                      setSelectedItem(localItems.find((i) => i.id === id) || null);
                       setPanelMode('view');
                     }}
                     onEdit={(id) => {
-                      setSelectedItem(list.todoItems.find((i) => i.id === id) || null);
+                      setSelectedItem(localItems.find((i) => i.id === id) || null);
                       setPanelMode('edit');
                     }}
                     onDelete={(id) => {
-                      const item = list.todoItems.find((i) => i.id === id);
+                      const item = localItems.find((i) => i.id === id);
                       if (item) {
                         setDeleteConfirmItem(item);
                       }

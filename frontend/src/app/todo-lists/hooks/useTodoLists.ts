@@ -26,7 +26,7 @@ export function useTodoLists() {
     onMutate: async (input) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
-      const tempId = `temp-${crypto.randomUUID()}`;
+      const tempId = `temp-${crypto.randomUUID()}` as unknown as number;
       queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) => [
         ...(old || []),
         { id: tempId, name: input.name, todoItems: [] },
@@ -179,7 +179,6 @@ export function useTodoLists() {
       );
       return { prev };
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
     onError: (_error, _variables, context) => {
       queryClient.setQueryData(queryKey, context?.prev);
       toast.error('Failed to reorder tasks');
