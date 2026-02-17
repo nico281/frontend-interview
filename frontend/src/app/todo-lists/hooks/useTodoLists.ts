@@ -169,8 +169,8 @@ export function useTodoLists() {
       const itemIds = updatedList.todoItems.map((i) => i.id);
       return api.reorderItems(listId, itemIds);
     },
-    onMutate: ({ listId, itemId, newOrder }) => {
-      queryClient.cancelQueries({ queryKey });
+    onMutate: async ({ listId, itemId, newOrder }) => {
+      await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
       queryClient.setQueryData(queryKey, (old: TodoListType[] | undefined) =>
         reorderItemInList(old || [], listId, itemId, newOrder),

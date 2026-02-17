@@ -9,7 +9,7 @@ import {
 } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { ClipboardList, Edit, Plus, Trash2 } from 'lucide-react';
-import { type FormEvent, useEffect, useRef, useState } from 'react';
+import { type FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { ConfirmModal } from '@/shared/components/ConfirmModal';
 import { scrollToBottom } from '@/shared/utils/scrollUtils';
 import type { TodoItem as TodoItemType, TodoList as TodoListType } from '../types';
@@ -69,7 +69,7 @@ export function TodoList({
   };
 
   // Memoize sortable items to prevent unnecessary re-renders
-  const sortableItemIds = list.todoItems.map((i) => i.id);
+  const sortableItemIds = useMemo(() => list.todoItems.map((i) => i.id), [list.todoItems]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
