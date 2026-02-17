@@ -71,13 +71,14 @@ export default function TodoListsApp() {
             <div className="space-y-4">
               {lists.data?.map((list: TodoListType, index: number) => {
                 const isLast = index === (lists.data?.length ?? 0) - 1;
+                const isTemp = String(list.id).startsWith('temp-');
                 return (
                   <TodoList
                     key={list.id}
                     list={list}
                     scrollContainerRef={isLast ? scrollContainerRef : undefined}
-                    style={{ animationDelay: `${index * 50}ms` }}
-                    className="animate-fade-in-up opacity-0"
+                    style={isTemp ? undefined : { animationDelay: `${index * 50}ms` }}
+                    className={isTemp ? '' : 'animate-fade-in-up opacity-0'}
                     onUpdateList={(name) => updateList.mutate({ id: list.id, input: { name } })}
                     onDeleteList={() => setDeleteConfirmList(list.id)}
                     onCreateItem={(name) => createItem.mutate({ listId: list.id, input: { name } })}
