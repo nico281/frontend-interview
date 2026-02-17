@@ -14,10 +14,11 @@ export default function TodoListsApp() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
-  // Mark initial load as complete after first successful data fetch
+  // Mark initial load as complete after animation has time to start
   useEffect(() => {
     if (lists.data && !initialLoadComplete) {
-      setInitialLoadComplete(true);
+      const timer = setTimeout(() => setInitialLoadComplete(true), 100);
+      return () => clearTimeout(timer);
     }
   }, [lists.data, initialLoadComplete]);
 
