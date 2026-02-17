@@ -1,5 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { reorderItemInList } from '@/shared/utils/arrayUtils';
 import * as api from '../services/api';
@@ -75,8 +74,7 @@ export function useTodoLists() {
   });
 
   const createItem = useMutation({
-    mutationFn: ({ listId, input }: { listId: number; input: CreateItemInput }) =>
-      api.createTodoItem(listId, input),
+    mutationFn: ({ listId, input }: { listId: number; input: CreateItemInput }) => api.createTodoItem(listId, input),
     onMutate: async ({ listId, input }) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);
@@ -135,8 +133,7 @@ export function useTodoLists() {
   });
 
   const deleteItem = useMutation({
-    mutationFn: ({ listId, itemId }: { listId: number; itemId: number }) =>
-      api.deleteTodoItem(listId, itemId),
+    mutationFn: ({ listId, itemId }: { listId: number; itemId: number }) => api.deleteTodoItem(listId, itemId),
     onMutate: async ({ listId, itemId }) => {
       await queryClient.cancelQueries({ queryKey });
       const prev = queryClient.getQueryData(queryKey);

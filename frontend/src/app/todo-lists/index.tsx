@@ -5,6 +5,7 @@ import { ThemeToggle } from '@/shared/components/ThemeToggle';
 import { scrollToBottom } from '@/shared/utils/scrollUtils';
 import { TodoList } from './components/TodoList';
 import { useTodoLists } from './hooks/useTodoLists';
+import type { TodoItem, TodoList as TodoListType } from './types';
 
 export default function TodoListsApp() {
   const { lists, createList, deleteList, updateList, createItem, updateItem, deleteItem, reorderItem } = useTodoLists();
@@ -68,7 +69,7 @@ export default function TodoListsApp() {
             </div>
           ) : (
             <div className="space-y-4">
-              {lists.data?.map((list: any, index: number) => {
+              {lists.data?.map((list: TodoListType, index: number) => {
                 const isLast = index === (lists.data?.length ?? 0) - 1;
                 return (
                   <TodoList
@@ -81,7 +82,9 @@ export default function TodoListsApp() {
                     onDeleteList={() => setDeleteConfirmList(list.id)}
                     onCreateItem={(name) => createItem.mutate({ listId: list.id, input: { name } })}
                     onToggleItem={(itemId) => {
-                      const item = lists.data?.find((l: any) => l.id === list.id)?.todoItems.find((i: any) => i.id === itemId);
+                      const item = lists.data
+                        ?.find((l: TodoListType) => l.id === list.id)
+                        ?.todoItems.find((i: TodoItem) => i.id === itemId);
                       updateItem.mutate({
                         listId: list.id,
                         itemId,
