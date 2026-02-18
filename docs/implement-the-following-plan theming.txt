@@ -1,0 +1,1306 @@
+
+ ▐▛███▜▌   Claude Code v2.1.42
+▝▜█████▛▘  Opus 4.6 · API Usage Billing
+  ▘▘ ▝▝    ~/Desktop/Nico/projects/frontend-interview
+
+  Welcome to Opus 4.6
+
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ Plan to implement                                                            │
+│                                                                              │
+│ Plan: Dark/Light Theme Toggle                                                │
+│                                                                              │
+│ Context                                                                      │
+│                                                                              │
+│ Agregar un toggle en el topbar para cambiar entre tema claro y oscuro.       │
+│ Actualmente la app usa colores fijos (bg-white, bg-neutral-900) sin soporte  │
+│ para themes.                                                                 │
+│                                                                              │
+│ Implementación                                                               │
+│                                                                              │
+│ 1. Configurar Tailwind para dark mode                                        │
+│                                                                              │
+│ Archivo: frontend/tailwind.config.js                                         │
+│ - Agregar darkMode: 'class' para habilitar dark mode con clase CSS           │
+│                                                                              │
+│ 2. Crear Theme Context y Provider                                            │
+│                                                                              │
+│ Archivo: frontend/src/shared/contexts/ThemeContext.tsx (nuevo)               │
+│ - Crear contexto con theme: 'light' | 'dark'                                 │
+│ - Inicializar con: localStorage → sino prefers-color-scheme → sino 'light'   │
+│ - Persistir preferencia en localStorage                                      │
+│ - Efecto para aplicar clase 'dark' al document.documentElement               │
+│ - Hook useTheme() para consumir el contexto                                  │
+│                                                                              │
+│ 3. Agregar Provider al root                                                  │
+│                                                                              │
+│ Archivo: frontend/src/main.tsx                                               │
+│ - Envolver app con ThemeProvider                                             │
+│                                                                              │
+│ 4. Crear ThemeToggle component                                               │
+│                                                                              │
+│ Archivo: frontend/src/shared/components/ThemeToggle.tsx (nuevo)              │
+│ - Botón con ícono (Sun/Moon de lucide-react)                                 │
+│ - Usa useTheme() para alternar                                               │
+│ - Animación de transición entre iconos                                       │
+│                                                                              │
+│ 5. Actualizar colores en componentes                                         │
+│                                                                              │
+│ Archivos a modificar:                                                        │
+│ - frontend/src/app/todo-lists/index.tsx (header, form, main bg)              │
+│ - frontend/src/app/todo-lists/components/TodoList.tsx (card, header, inputs) │
+│ - frontend/src/app/todo-lists/components/TodoItem.tsx (hover, checkbox)      │
+│ - frontend/src/app/todo-lists/components/TodoItemDetailPanel.tsx (panel,     │
+│ inputs)                                                                      │
+│ - frontend/src/shared/components/ConfirmModal.tsx (modal)                    │
+│                                                                              │
+│ Mapeo de colores:                                                            │
+│                                                                              │
+│ ┌──────────────────────┬───────────────────────────┐                         │
+│ │        Claro         │          Oscuro           │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ bg-white             │ dark:bg-neutral-900       │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ bg-neutral-50        │ dark:bg-neutral-800       │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ bg-neutral-900       │ dark:bg-neutral-100       │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ text-white           │ dark:text-neutral-900     │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ border-neutral-200   │ dark:border-neutral-700   │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ border-neutral-300   │ dark:border-neutral-600   │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ text-neutral-400     │ dark:text-neutral-500     │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ text-neutral-600     │ dark:text-neutral-400     │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ text-neutral-800     │ dark:text-neutral-200     │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ text-neutral-900     │ dark:text-white           │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ bg-neutral-800       │ dark:bg-neutral-200       │                         │
+│ ├──────────────────────┼───────────────────────────┤                         │
+│ │ hover:bg-neutral-700 │ dark:hover:bg-neutral-300 │                         │
+│ └──────────────────────┴───────────────────────────┘                         │
+│                                                                              │
+│ 6. Agregar toggle al TopBar                                                  │
+│                                                                              │
+│ Archivo: frontend/src/app/todo-lists/index.tsx (línea ~27)                   │
+│ - Reemplazar placeholder con <ThemeToggle />                                 │
+│                                                                              │
+│ Archivos críticos                                                            │
+│                                                                              │
+│ - frontend/tailwind.config.js - Config dark mode                             │
+│ - frontend/src/main.tsx - Agregar ThemeProvider                              │
+│ - frontend/src/shared/contexts/ThemeContext.tsx - Nuevo                      │
+│ - frontend/src/shared/components/ThemeToggle.tsx - Nuevo                     │
+│ - frontend/src/app/todo-lists/index.tsx - TopBar + colores dark              │
+│ - frontend/src/app/todo-lists/components/TodoList.tsx - Colores dark         │
+│ - frontend/src/app/todo-lists/components/TodoItem.tsx - Colores dark         │
+│ - frontend/src/app/todo-lists/components/TodoItemDetailPanel.tsx - Colores   │
+│ dark                                                                         │
+│ - frontend/src/shared/components/ConfirmModal.tsx - Colores dark             │
+│                                                                              │
+│ Verificación                                                                 │
+│                                                                              │
+│ 1. Click en toggle cambia ícono (sun ↔ moon)                                 │
+│ 2. Los colores cambian correctamente en toda la app                          │
+│ 3. La preferencia se mantiene al recargar la página (localStorage)           │
+│ 4. Sistema operativo con dark mode preferido → respetar (opcional, verificar │
+│  con media query)                                                            │
+│                                                                              │
+│ Unresolved questions                                                         │
+│                                                                              │
+│ - Ninguna                                                                    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+⏺ I'll implement the dark/light theme toggle following the plan. Let me start by
+   reading the relevant files to understand the current structure.
+
+⏺ Read 2 files (ctrl+o to expand)
+
+⏺ Now I'll implement the dark/light theme toggle following the plan. Let me
+  start with the changes:
+
+⏺ Update(frontend/tailwind.config.js)
+  ⎿  Added 1 line
+      1  /** @type {import('tailwindcss').Config} */
+      2  export default {
+      3    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+      4 +  darkMode: 'class',                                            
+      5    theme: {
+      6      extend: {},
+      7    },
+
+⏺ Write(frontend/src/shared/components/ThemeToggle.tsx)
+  ⎿  Wrote 17 lines to frontend/src/shared/components/ThemeToggle.tsx
+       1 import { Moon, Sun } from 'lucide-react';
+       2 import { useTheme } from '@/shared/contexts/ThemeContext';
+       3 
+       4 export function ThemeToggle() {
+       5   const { theme, toggleTheme } = useTheme();
+       6 
+       7   return (
+       8     <button
+       9       onClick={toggleTheme}
+      10       className="text-white hover:text-neutral-300 transition-co
+         lors"
+     … +7 lines (ctrl+o to expand)
+
+⏺ Update(frontend/src/main.tsx)
+  ⎿  Added 6 lines, removed 3 lines
+      1  import { QueryClient, QueryClientProvider } from '@tanstack/reac
+         t-query';
+      2  import { StrictMode } from 'react';
+      3  import { createRoot } from 'react-dom/client';
+      4 +import { ThemeProvider } from './shared/contexts/ThemeContext'; 
+      5  import TodoListsApp from './app/todo-lists';
+      6  import './index.css';
+      7  
+     ...
+       9  
+      10  createRoot(document.getElementById('root')!).render(
+      11    <StrictMode>
+      11 -    <QueryClientProvider client={queryClient}>                 
+      12 -      <TodoListsApp />                                         
+      13 -    </QueryClientProvider>                                     
+      12 +    <ThemeProvider>                                            
+      13 +      <QueryClientProvider client={queryClient}>               
+      14 +        <TodoListsApp />                                       
+      15 +      </QueryClientProvider>                                   
+      16 +    </ThemeProvider>                                           
+      17    </StrictMode>,
+      18  );
+
+⏺ Now let's update the components with dark mode colors:
+
+⏺ Update(frontend/src/app/todo-lists/index.tsx)
+  ⎿  Added 8 lines, removed 7 lines
+      1  import { Plus } from 'lucide-react';
+      2  import { type FormEvent, useRef, useState } from 'react';
+      3  import { ConfirmModal } from '@/shared/components/ConfirmModal';
+      4 +import { ThemeToggle } from '@/shared/components/ThemeToggle';  
+      5  import { scrollToBottom } from '@/shared/hooks/useScrollToBottom
+         ';
+      6  import { TodoList } from './components/TodoList';
+      7  import { useTodoLists } from './hooks/useTodoLists';
+     ...
+      22    };
+      23  
+      24    return (
+      24 -    <div className="h-screen bg-white flex flex-col overflow-hi
+         -dden">                                                         
+      25 -      <header className="bg-neutral-900 py-4 px-6 flex items-ce
+         -nter justify-between flex-shrink-0">                           
+      26 -        <h1 className="text-white text-xl font-semibold">To-Do 
+         -List</h1>                                                      
+      27 -        {/* Theme toggle placeholder */}                       
+      25 +    <div className="h-screen bg-white dark:bg-neutral-900 flex 
+         +flex-col overflow-hidden">                                     
+      26 +      <header className="bg-neutral-900 dark:bg-neutral-100 py-
+         +4 px-6 flex items-center justify-between flex-shrink-0">       
+      27 +        <h1 className="text-white dark:text-neutral-900 text-xl
+         + font-semibold">To-Do List</h1>                                
+      28 +        <ThemeToggle />                                        
+      29        </header>
+      30  
+      30 -      <div className="flex-shrink-0 bg-white border-b border-ne
+         -utral-200">                                                    
+      31 +      <div className="flex-shrink-0 bg-white dark:bg-neutral-90
+         +0 border-b border-neutral-200 dark:border-neutral-700">        
+      32          <main className="max-w-md mx-auto px-6 py-4">
+      33            <form onSubmit={handleCreateList} className="relative
+          ">
+      34              <input
+     ...
+      36                placeholder="New list name..."
+      37                value={newListName}
+      38                onChange={(e) => setNewListName(e.target.value)}
+      38 -              className="w-full pr-12 pl-4 py-2 border border-n
+         -eutral-200 rounded-full text-sm focus:outline-none focus:ring-2
+         - focus:ring-neutral-900 focus:border-neutral-900"              
+      39 +              className="w-full pr-12 pl-4 py-2 border border-n
+         +eutral-200 dark:border-neutral-700 rounded-full text-sm focus:o
+         +utline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring
+         +-neutral-400 focus:border-neutral-900 dark:focus:border-neutral
+         +-400 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-wh
+         +ite"                                                           
+      40              />
+      41              <button
+      42                type="submit"
+      43                disabled={!newListName.trim()}
+      43 -              className="absolute right-1 top-1/2 -translate-y-
+         -1/2 w-8 h-8 rounded-full bg-neutral-800 text-white flex items-c
+         -enter justify-center hover:bg-neutral-700 disabled:opacity-40 d
+         -isabled:cursor-not-allowed"                                    
+      44 +              className="absolute right-1 top-1/2 -translate-y-
+         +1/2 w-8 h-8 rounded-full bg-neutral-800 dark:bg-neutral-200 tex
+         +t-white dark:text-neutral-900 flex items-center justify-center 
+         +hover:bg-neutral-700 dark:hover:bg-neutral-300 disabled:opacity
+         +-40 disabled:cursor-not-allowed"                               
+      45              >
+      46                <Plus size={18} />
+      47              </button>
+
+⏺ Update(frontend/src/app/todo-lists/components/TodoList.tsx)
+  ⎿  Added 7 lines, removed 7 lines
+      122      <>
+      123        <div
+      124          ref={listRef}
+      125 -        className="bg-white rounded-xl shadow-sm border border
+          --neutral-900 overflow-hidden"                                 
+      125 +        className="bg-white dark:bg-neutral-800 rounded-xl sha
+          +dow-sm border border-neutral-900 dark:border-neutral-200 overf
+          +low-hidden"                                                   
+      126        >
+      127 -        <div className="bg-neutral-900 px-5 py-4 flex items-ce
+          -nter justify-between">                                        
+      127 +        <div className="bg-neutral-900 dark:bg-neutral-200 px-
+          +5 py-4 flex items-center justify-between">                    
+      128            {isEditingName ? (
+      129              <form
+      130                onSubmit={(e) => {
+     ...
+      133                }}
+      134                className="flex-1 flex items-center gap-2"
+      135              >
+      136 -              <ClipboardList size={18} className="text-white f
+          -lex-shrink-0" />                                              
+      136 +              <ClipboardList size={18} className="text-white d
+          +ark:text-neutral-900 flex-shrink-0" />                        
+      137                <input
+      138                  ref={nameInputRef}
+      139                  type="text"
+     ...
+      146                      handleSaveName();
+      147                    }
+      148                  }}
+      149 -                className="flex-1 bg-white/10 text-white font-
+          -semibold text-sm px-2 py-1 rounded border border-white/30 focu
+          -s:outline-none focus:border-white"                            
+      149 +                className="flex-1 bg-white/10 dark:bg-neutral-
+          +900/10 text-white dark:text-neutral-900 font-semibold text-sm 
+          +px-2 py-1 rounded border border-white/30 dark:border-neutral-6
+          +00 focus:outline-none focus:border-white dark:focus:border-neu
+          +tral-400"                                                     
+      150                />
+      151              </form>
+      152            ) : (
+      153 -            <h2 className="font-semibold text-white flex items
+          --center gap-2">                                               
+      153 +            <h2 className="font-semibold text-white dark:text-
+          +neutral-900 flex items-center gap-2">                         
+      154                <ClipboardList size={18} />
+      155                {list.name}
+      156              </h2>
+     ...
+      159              {!isEditingName && (
+      160                <button
+      161                  onClick={handleStartEditName}
+      162 -                className="text-neutral-400 hover:text-white" 
+      162 +                className="text-neutral-400 dark:text-neutral-
+          +600 hover:text-white dark:hover:text-neutral-900"             
+      163                >
+      164                  <Edit size={18} />
+      165                </button>
+      166              )}
+      167              <button
+      168                onClick={onDeleteList}
+      169 -              className="text-neutral-400 hover:text-red-400" 
+      169 +              className="text-neutral-400 dark:text-neutral-60
+          +0 hover:text-red-400 dark:hover:text-red-500"                 
+      170              >
+      171                <Trash2 size={18} />
+      172              </button>
+
+⏺ Update(frontend/src/app/todo-lists/components/TodoList.tsx)
+  ⎿  Added 2 lines, removed 2 lines
+      219                placeholder="Add a new task"
+      220                value={newItemName}
+      221                onChange={(e) => setNewItemName(e.target.value)}
+      222 -              className="w-full pr-12 pl-4 py-2 border border-
+          -neutral-200 rounded-full text-sm focus:outline-none focus:ring
+          --2 focus:ring-neutral-900 focus:border-neutral-900"           
+      222 +              className="w-full pr-12 pl-4 py-2 border border-
+          +neutral-200 dark:border-neutral-600 rounded-full text-sm focus
+          +:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:r
+          +ing-neutral-400 focus:border-neutral-900 dark:focus:border-neu
+          +tral-400 bg-white dark:bg-neutral-700 text-neutral-900 dark:te
+          +xt-white"                                                     
+      223              />
+      224              <button
+      225                type="submit"
+      226                disabled={!newItemName.trim()}
+      227 -              className="absolute right-1 top-1/2 -translate-y
+          --1/2 w-8 h-8 rounded-full bg-neutral-800 text-white flex items
+          --center justify-center hover:bg-neutral-700 disabled:opacity-4
+          -0 disabled:cursor-not-allowed"                                
+      227 +              className="absolute right-1 top-1/2 -translate-y
+          +-1/2 w-8 h-8 rounded-full bg-neutral-800 dark:bg-neutral-200 t
+          +ext-white dark:text-neutral-900 flex items-center justify-cent
+          +er hover:bg-neutral-700 dark:hover:bg-neutral-300 disabled:opa
+          +city-40 disabled:cursor-not-allowed"                          
+      228              >
+      229                <Plus size={18} />
+      230              </button>
+
+⏺ Update(frontend/src/app/todo-lists/components/TodoItem.tsx)
+  ⎿  Added 6 lines, removed 6 lines
+      27      <li
+      28        ref={setNodeRef}
+      29        style={style}
+      30 -      className={`group flex items-center gap-3 py-3 px-3 -mx-3
+         - rounded-lg border border-transparent hover:bg-neutral-50 hover
+         -:border-neutral-200 ${isDragging ? 'shadow-lg bg-white' : ''}`}
+      30 +      className={`group flex items-center gap-3 py-3 px-3 -mx-3
+         + rounded-lg border border-transparent hover:bg-neutral-50 dark:
+         +hover:bg-neutral-700 hover:border-neutral-200 dark:hover:border
+         +-neutral-600 ${isDragging ? 'shadow-lg bg-white dark:bg-neutral
+         +-700' : ''}`}                                                  
+      31      >
+      32        <button
+      33 -        className="cursor-grab active:cursor-grabbing text-neut
+         -ral-300 hover:text-neutral-500"                                
+      33 +        className="cursor-grab active:cursor-grabbing text-neut
+         +ral-300 dark:text-neutral-600 hover:text-neutral-500 dark:hover
+         +:text-neutral-400"                                             
+      34          {...attributes}
+      35          {...listeners}
+      36        >
+     ...
+      39        <button
+      40          onClick={() => onToggle(item.id)}
+      41          className={`w-5 h-5 rounded-full border flex items-cent
+          er justify-center flex-shrink-0 ${
+      42 -          item.done ? 'bg-neutral-900 border-neutral-900 text-w
+         -hite' : 'border-neutral-300'                                   
+      42 +          item.done ? 'bg-neutral-900 dark:bg-neutral-200 borde
+         +r-neutral-900 dark:border-neutral-200 text-white dark:text-neut
+         +ral-900' : 'border-neutral-300 dark:border-neutral-600'        
+      43          }`}
+      44        >
+      45          {item.done && <Check size={14} strokeWidth={3} />}
+      46        </button>
+      47        <span
+      48          onClick={() => onView(item.id)}
+      49 -        className={`flex-1 text-sm cursor-pointer ${item.done ?
+         - 'line-through text-neutral-400' : 'text-neutral-800'}`}       
+      49 +        className={`flex-1 text-sm cursor-pointer ${item.done ?
+         + 'line-through text-neutral-400 dark:text-neutral-500' : 'text-
+         +neutral-800 dark:text-neutral-200'}`}                          
+      50        >
+      51          {item.name}
+      52        </span>
+      53        <div className="opacity-0 group-hover:opacity-100 flex ga
+          p-2">
+      54 -        <button onClick={() => onEdit(item.id)} className="text
+         --neutral-400 hover:text-neutral-600">                          
+      54 +        <button onClick={() => onEdit(item.id)} className="text
+         +-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:
+         +hover:text-neutral-400">                                       
+      55            <Pencil size={16} />
+      56          </button>
+      57 -        <button onClick={() => onDelete(item.id)} className="te
+         -xt-neutral-400 hover:text-neutral-900 font-semibold">          
+      57 +        <button onClick={() => onDelete(item.id)} className="te
+         +xt-neutral-400 dark:text-neutral-500 hover:text-neutral-900 dar
+         +k:hover:text-white font-semibold">                             
+      58            <X size={16} />
+      59          </button>
+      60        </div>
+
+⏺ Update(frontend/src/app/todo-lists/components/TodoItemDetailPanel.tsx)
+  ⎿  Added 16 lines, removed 16 lines
+      49          onClick={handleClose}
+      50        />
+      51        <div
+      52 -        className={`fixed right-0 top-0 bottom-0 w-full max-w-m
+         -d bg-white shadow-xl z-50 flex flex-col ${                     
+      52 +        className={`fixed right-0 top-0 bottom-0 w-full max-w-m
+         +d bg-white dark:bg-neutral-800 shadow-xl z-50 flex flex-col ${ 
+      53            isClosing ? 'animate-slide-out-right' : 'animate-slid
+          e-in-right'
+      54          }`}
+      55          role="dialog"
+      56          aria-modal="true"
+      57          aria-labelledby="panel-title"
+      58        >
+      59 -        <div className="flex items-center justify-between p-6 b
+         -order-b border-neutral-200">                                   
+      60 -          <h2 id="panel-title" className="text-lg font-semibold
+         - text-neutral-900">                                            
+      59 +        <div className="flex items-center justify-between p-6 b
+         +order-b border-neutral-200 dark:border-neutral-700">           
+      60 +          <h2 id="panel-title" className="text-lg font-semibold
+         + text-neutral-900 dark:text-white">                            
+      61              {isViewMode ? 'Task Details' : 'Edit Task'}
+      62            </h2>
+      63 -          <button onClick={handleClose} className="text-neutral
+         --400 hover:text-neutral-900" aria-label="Close panel">         
+      63 +          <button onClick={handleClose} className="text-neutral
+         +-400 dark:text-neutral-500 hover:text-neutral-900 dark:hover:te
+         +xt-white" aria-label="Close panel">                            
+      64              <X size={20} />
+      65            </button>
+      66          </div>
+     ...
+      68          {isViewMode ? (
+      69            <div className="flex-1 overflow-y-auto p-6 space-y-6"
+          >
+      70              <div>
+      71 -              <h3 className="text-sm font-medium text-neutral-5
+         -00 mb-2">Name</h3>                                             
+      72 -              <p className="text-neutral-900">{item.name}</p>  
+      71 +              <h3 className="text-sm font-medium text-neutral-5
+         +00 dark:text-neutral-400 mb-2">Name</h3>                       
+      72 +              <p className="text-neutral-900 dark:text-white">{
+         +item.name}</p>                                                 
+      73              </div>
+      74  
+      75              <div>
+      76 -              <h3 className="text-sm font-medium text-neutral-5
+         -00 mb-2">Description</h3>                                      
+      76 +              <h3 className="text-sm font-medium text-neutral-5
+         +00 dark:text-neutral-400 mb-2">Description</h3>                
+      77                {item.description ? (
+      78 -                <p className="text-neutral-900 whitespace-pre-w
+         -rap">{item.description}</p>                                    
+      78 +                <p className="text-neutral-900 dark:text-white 
+         +whitespace-pre-wrap">{item.description}</p>                    
+      79                ) : (
+      80 -                <p className="text-neutral-400 italic">No descr
+         -iption</p>                                                     
+      80 +                <p className="text-neutral-400 dark:text-neutra
+         +l-500 italic">No description</p>                               
+      81                )}
+      82              </div>
+      83            </div>
+      84          ) : (
+      85            <form onSubmit={handleSubmit} className="flex-1 overf
+          low-y-auto p-6 space-y-6">
+      86              <div>
+      87 -              <label htmlFor="task-name" className="block text-
+         -sm font-medium text-neutral-700 mb-2">                         
+      87 +              <label htmlFor="task-name" className="block text-
+         +sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">   
+      88                  Name
+      89                </label>
+      90                <input
+     ...
+       92                  type="text"
+       93                  value={name}
+       94                  onChange={(e) => setName(e.target.value)}
+       95 -                className="w-full px-3 py-2 border border-neut
+          -ral-200 rounded-lg text-sm focus:outline-none focus:ring-2 foc
+          -us:ring-neutral-900 focus:border-neutral-900"                 
+       95 +                className="w-full px-3 py-2 border border-neut
+          +ral-200 dark:border-neutral-600 rounded-lg text-sm focus:outli
+          +ne-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-ne
+          +utral-400 focus:border-neutral-900 dark:focus:border-neutral-4
+          +00 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-whi
+          +te"                                                           
+       96                />
+       97              </div>
+       98  
+       99              <div>
+      100 -              <label htmlFor="task-description" className="blo
+          -ck text-sm font-medium text-neutral-700 mb-2">                
+      100 +              <label htmlFor="task-description" className="blo
+          +ck text-sm font-medium text-neutral-700 dark:text-neutral-300 
+          +mb-2">                                                        
+      101                  Description
+      102                </label>
+      103                <textarea
+     ...
+      106                  onChange={(e) => setDescription(e.target.value
+           )}
+      107                  rows={8}
+      108                  placeholder="Add a description..."
+      109 -                className="w-full px-3 py-2 border border-neut
+          -ral-200 rounded-lg text-sm focus:outline-none focus:ring-2 foc
+          -us:ring-neutral-900 focus:border-neutral-900 resize-none"     
+      109 +                className="w-full px-3 py-2 border border-neut
+          +ral-200 dark:border-neutral-600 rounded-lg text-sm focus:outli
+          +ne-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-ne
+          +utral-400 focus:border-neutral-900 dark:focus:border-neutral-4
+          +00 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-whi
+          +te resize-none"                                               
+      110                />
+      111              </div>
+      112            </form>
+      113          )}
+      114  
+      115          {!isViewMode && (
+      116 -          <div className="flex justify-end gap-3 p-6 border-t 
+          -border-neutral-200">                                          
+      116 +          <div className="flex justify-end gap-3 p-6 border-t 
+          +border-neutral-200 dark:border-neutral-700">                  
+      117              <button
+      118                type="button"
+      119                onClick={handleClose}
+      120 -              className="px-4 py-2 text-sm text-neutral-600 ho
+          -ver:text-neutral-900"                                         
+      120 +              className="px-4 py-2 text-sm text-neutral-600 da
+          +rk:text-neutral-400 hover:text-neutral-900 dark:hover:text-whi
+          +te"                                                           
+      121              >
+      122                Cancel
+      123              </button>
+      124              <button
+      125                type="submit"
+      126                onClick={handleSubmit}
+      127 -              className="px-4 py-2 bg-neutral-900 text-white t
+          -ext-sm rounded-lg hover:bg-neutral-800"                       
+      127 +              className="px-4 py-2 bg-neutral-900 dark:bg-neut
+          +ral-200 text-white dark:text-neutral-900 text-sm rounded-lg ho
+          +ver:bg-neutral-800 dark:hover:bg-neutral-300"                 
+      128              >
+      129                Save Changes
+      130              </button>
+
+⏺ Update(frontend/src/shared/components/ConfirmModal.tsx)
+  ⎿  Added 5 lines, removed 5 lines
+      26          className="absolute inset-0 bg-black/50"
+      27          onClick={onCancel}
+      28        />
+      29 -      <div className="relative bg-white rounded-xl shadow-lg ma
+         -x-w-md w-full mx-4 p-6">                                       
+      29 +      <div className="relative bg-white dark:bg-neutral-800 rou
+         +nded-xl shadow-lg max-w-md w-full mx-4 p-6">                   
+      30          <button
+      31            onClick={onCancel}
+      32 -          className="absolute top-4 right-4 text-neutral-400 ho
+         -ver:text-neutral-600"                                          
+      32 +          className="absolute top-4 right-4 text-neutral-400 da
+         +rk:text-neutral-500 hover:text-neutral-600 dark:hover:text-neut
+         +ral-300"                                                       
+      33          >
+      34            <X size={20} />
+      35          </button>
+      36 -        <h3 className="text-lg font-semibold mb-2">{title}</h3>
+      37 -        <p className="text-neutral-600 mb-6">{message}</p>     
+      36 +        <h3 className="text-lg font-semibold text-neutral-900 d
+         +ark:text-white mb-2">{title}</h3>                              
+      37 +        <p className="text-neutral-600 dark:text-neutral-400 mb
+         +-6">{message}</p>                                              
+      38          <div className="flex gap-3 justify-end">
+      39            <button
+      40              onClick={onCancel}
+      41 -            className="px-4 py-2 text-sm font-medium text-neutr
+         -al-600 hover:text-neutral-800"                                 
+      41 +            className="px-4 py-2 text-sm font-medium text-neutr
+         +al-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:
+         +text-white"                                                    
+      42            >
+      43              Cancel
+      44            </button>
+
+⏺ Let me verify the build works:
+
+⏺ Bash(cd /Users/nicolasmanayolivera/Desktop/Nico/projects/frontend-interview/fr
+      ontend && bun run build 2>&1)
+  ⎿  Error: Exit code 2
+     $ tsc -b && vite build
+     src/app/todo-lists/components/TodoItemDetailPanel.tsx(126,15): error 
+     TS2322: Type '(e: FormEvent<HTMLFormElement>) => void' is not assignable to
+      type 'MouseEventHandler<HTMLButtonElement>'.
+       Types of parameters 'e' and 'event' are incompatible.
+         Type 'MouseEvent<HTMLButtonElement, MouseEvent>' is not assignable to 
+     type 'FormEvent<HTMLFormElement>'.
+           Types of property 'currentTarget' are incompatible.
+             Type 'EventTarget & HTMLButtonElement' is not assignable to type 
+     'EventTarget & HTMLFormElement'.
+               Type 'EventTarget & HTMLButtonElement' is missing the following 
+     properties from type 'HTMLFormElement': acceptCharset, action, 
+     autocomplete, elements, and 12 more.
+     src/app/todo-lists/hooks/useTodoLists.ts(125,27): error TS2345: Argument of
+      type 'TodoList[] | undefined' is not assignable to parameter of type 
+     'TodoList[]'.
+       Type 'undefined' is not assignable to type 'TodoList[]'.
+     … +36 lines (ctrl+o to see all)
+
+⏺ The build has pre-existing type errors not related to my changes. Let me
+  verify that the theme toggle works by running the dev server and checking the
+  specific theme-related code:
+
+⏺ Bash(cd /Users/nicolasmanayolivera/Desktop/Nico/projects/frontend-interview/fr
+      ontend && bun run type-check 2>&1 | head -20)
+  ⎿  error: Script not found "type-check"
+
+⏺ Let me check if there are any type errors specifically in the files I
+  modified:
+
+⏺ Bash(bunx tsc --noEmit src/shared/contexts/ThemeContext.tsx
+      src/shared/components/ThemeToggle.tsx 2>&1)
+  ⎿  Error: Exit code 2
+     node_modules/@types/aria-query/index.d.ts(21,61): error TS2583: Cannot find
+      name 'Set'. Do you need to change your target library? Try changing the 
+     'lib' compiler option to 'es2015' or later.
+     node_modules/@types/aria-query/index.d.ts(23,59): error TS2583: Cannot find
+      name 'Set'. Do you need to change your target library? Try changing the 
+     'lib' compiler option to 'es2015' or later.
+     node_modules/@types/babel__template/index.d.ts(11,28): error TS2583: Cannot
+      find name 'Set'. Do you need to change your target library? Try changing 
+     the 'lib' compiler option to 'es2015' or later.
+     node_modules/@types/babel__traverse/index.d.ts(63,15): error TS2583: Cannot
+      find name 'WeakMap'. Do you need to change your target library? Try 
+     changing the 'lib' compiler option to 'es2015' or later.
+     node_modules/@types/babel__traverse/index.d.ts(63,31): error TS2583: Cannot
+      find name 'Map'. Do you need to change your target library? Try changing 
+     the 'lib' compiler option to 'es2015' or later.
+     node_modules/@types/babel__traverse/index.d.ts(64,16): error TS2583: Cannot
+      find name 'WeakMap'. Do you need to change your target library? Try 
+     changing the 'lib' compiler option to 'es2015' or later.
+     node_modules/@types/babel__traverse/index.d.ts(90,13): error TS2583: Cannot
+      find name 'Map'. Do you need to change your target library? Try changing 
+     the 'lib' compiler option to 'es2015' or later.
+     node_modules/@types/chai/index.d.ts(883,42): error TS2304: Cannot find name
+      'ReadonlySet'.
+     node_modules/@types/chai/index.d.ts(883,59): error TS2304: Cannot find name
+      'ReadonlyMap'.
+     … +19 lines (ctrl+o to see all)
+
+⏺ Those are just tsc config issues not related to my code. Let me check that the
+   files work with vite:
+
+⏺ Bash(bun run dev 2>&1 &)
+  ⎿  Interrupted · What should Claude do instead?
+
+❯ esta corrindo ya 
+
+⏺ Entendido. El theme toggle está implementado. Resumen de cambios:
+
+  Nuevos archivos:
+  - frontend/src/shared/contexts/ThemeContext.tsx - Contexto con localStorage +
+  prefers-color-scheme
+  - frontend/src/shared/components/ThemeToggle.tsx - Botón con iconos Sun/Moon
+
+  Archivos modificados:
+  - frontend/tailwind.config.js - Agregado darkMode: 'class'
+  - frontend/src/main.tsx - Agregado ThemeProvider
+  - frontend/src/app/todo-lists/index.tsx - Toggle en header + colores dark
+  - frontend/src/app/todo-lists/components/TodoList.tsx - Colores dark
+  - frontend/src/app/todo-lists/components/TodoItem.tsx - Colores dark
+  - frontend/src/app/todo-lists/components/TodoItemDetailPanel.tsx - Colores
+  dark
+  - frontend/src/shared/components/ConfirmModal.tsx - Colores dark
+
+  Verificá en el navegador que el toggle funcione y los colores cambien
+  correctamente.
+
+❯ no veo ningun toggle en el navbar 
+
+⏺ Déjame verificar el archivo del navbar:
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ El código está correcto, el <ThemeToggle /> está en la línea 28. Verificá si
+  hay algún error en la consola del navegador. Podría ser que:
+
+  1. Hot reload no se aplicó - probá recargar la página (F5)
+  2. Error de import - abrí la consola del navegador (F12) a ver si hay algún
+  error
+
+  ¿Qué ves en la consola?
+
+❯ el header donde esta el titulo todolist no hay ningun toggle. en donde    
+  deberia esta?                                                             
+
+⏺ El toggle debería estar a la derecha del título "To-Do List" en el header.
+  Déjame verificar si el archivo se guardó correctamente:
+
+⏺ Searched for 1 pattern (ctrl+o to expand)
+
+⏺ El archivo tiene el código. Probá recargar la página hard (Ctrl+Shift+R o
+  Cmd+Shift+R). Si aún no aparece, pegame el error de la consola del navegador.
+
+❯ vamos a mejorar el estilo del boton. pourqe no se ve con el header        
+  blanco. ese esel problema. la luna se ve bien en el header negro pero el  
+  sol no                                                                    
+
+⏺ Entendido, el problema es el color. El header es negro en light mode (se
+  vuelve blanco en dark mode), y el toggle tiene color blanco fijo. Arreglemos
+  eso:
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Update(frontend/src/shared/components/ThemeToggle.tsx)
+  ⎿  Added 1 line, removed 1 line
+       7    return (
+       8      <button
+       9        onClick={toggleTheme}
+      10 -      className="text-white hover:text-neutral-300 transition-c
+         -olors"                                                         
+      10 +      className="text-white dark:text-neutral-900 hover:text-ne
+         +utral-300 dark:hover:text-neutral-600 transition-colors"       
+      11        aria-label="Toggle theme"
+      12      >
+      13        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} 
+          />}
+
+⏺ Ahora el toggle se adapta:
+  - Light mode (header negro): texto blanco
+  - Dark mode (header blanco): texto negro
+
+  Probá recargar.
+
+❯ perfecto. como implementaste el theme changer. me das una explicacion 
+
+⏺ Implementación del Theme Toggle
+
+  1. Tailwind config
+  darkMode: 'class'
+  Habilita dark mode basado en clase CSS (agrega/remueve dark en <html>).
+
+  2. ThemeContext - Guarda estado y persiste
+  const [theme, setTheme] = useState<Theme>(() => {
+    // 1. Lee localStorage
+    // 2. Sino, detecta preferencia del SO
+    // 3. Sino, default 'light'
+  })
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+    localStorage.setItem('theme', theme)  // Persiste
+  }, [theme])
+
+  3. ThemeProvider - Envuelve la app
+  <ThemeProvider>
+    <QueryClientProvider>
+      <TodoListsApp />
+    </QueryClientProvider>
+  </ThemeProvider>
+
+  4. ThemeToggle - Botón con ícono
+  {theme === 'light' ? <Moon /> : <Sun />}
+
+  5. Clases dark en componentes
+  bg-white dark:bg-neutral-900
+  text-neutral-900 dark:text-white
+
+  Tailwind aplica las clases dark: cuando <html> tiene la clase dark.
+
+❯ consulta algun otro elemento que fuera necesario agregar unit test 
+  ⎿  Interrupted · What should Claude do instead?
+
+❯ consulta algun otro elemento que fuera necesario agregar unit test que    
+  tenga funcionalidad de importancia, no que se presione un boton           
+
+⏺ Para el theme toggle, lo importante a testear no es el click (que es trivial),
+   sino:
+
+  1. Persistencia en localStorage - que guarde y recupere correctamente
+  2. Detección de preferencia del SO - prefers-color-scheme
+  3. Clase en document.documentElement - que agregue/remueva dark
+
+  Déjame crear tests para ThemeContext:
+
+⏺ Write(frontend/src/shared/contexts/ThemeContext.test.tsx)
+  ⎿  Wrote 128 lines to frontend/src/shared/contexts/ThemeContext.test.tsx
+       1 import { render, waitFor } from '@testing-library/react';
+       2 import { ThemeProvider, useTheme } from './ThemeContext';
+       3 
+       4 describe('ThemeContext', () => {
+       5   beforeEach(() => {
+       6     localStorage.clear();
+       7     document.documentElement.classList.remove('dark');
+       8   });
+       9 
+      10   it('should use light theme by default when no preference', asy
+         nc () => {
+     … +118 lines (ctrl+o to expand)
+
+⏺ Tests creados para:
+
+  1. Default light - Sin localStorage, sin preferencia del SO → light
+  2. System preference - SO en dark → usa dark
+  3. LocalStorage load - Lee preferencia guardada
+  4. Toggle & persist - Cambia tema, guarda en localStorage, aplica clase al DOM
+
+  ¿Corremos los tests para verificar?
+
+❯ si 
+
+⏺ Bash(bun test src/shared/contexts/ThemeContext.test.tsx 2>&1)
+  ⎿  Error: Exit code 1
+     bun test v1.2.21 (7c45ed97)
+
+     src/shared/contexts/ThemeContext.test.tsx:
+     1 | import { render, waitFor } from '@testing-library/react';
+     2 | import { ThemeProvider, useTheme } from './ThemeContext';
+     3 | 
+     4 | describe('ThemeContext', () => {
+     5 |   beforeEach(() => {
+     6 |     localStorage.clear();
+     … +42 lines (ctrl+o to see all)
+
+⏺ Necesito mockear localStorage. Déjame arreglarlo:
+
+⏺ Update(frontend/src/shared/contexts/ThemeContext.test.tsx)
+  ⎿  Added 32 lines, removed 8 lines
+       1  import { render, waitFor } from '@testing-library/react';
+       2  import { ThemeProvider, useTheme } from './ThemeContext';
+       3  
+       4 +const localStorageMock = (() => {                              
+       5 +  let store: Record<string, string> = {};                      
+       6 +  return {                                                     
+       7 +    getItem: (key: string) => store[key] ?? null,              
+       8 +    setItem: (key: string, value: string) => {                 
+       9 +      store[key] = value;                                      
+      10 +    },                                                         
+      11 +    removeItem: (key: string) => {                             
+      12 +      delete store[key];                                       
+      13 +    },                                                         
+      14 +    clear: () => {                                             
+      15 +      store = {};                                              
+      16 +    },                                                         
+      17 +  };                                                           
+      18 +})();                                                          
+      19 +                                                               
+      20 +Object.defineProperty(global, 'localStorage', { value: localSto
+         +rageMock });                                                   
+      21 +                                                               
+      22  describe('ThemeContext', () => {
+      23    beforeEach(() => {
+      24      localStorage.clear();
+     ...
+      26    });
+      27  
+      28    it('should use light theme by default when no preference', as
+          ync () => {
+      11 -    // Mock matchMedia to return light mode                    
+      29      vi.spyOn(window, 'matchMedia').mockReturnValue({
+      30        matches: false,
+      31        media: '',
+     ...
+      35        addListener: vi.fn(),
+      36        removeListener: vi.fn(),
+      37        dispatchEvent: vi.fn(),
+      21 -    });                                                        
+      38 +    } as MediaQueryList);                                      
+      39  
+      40      let theme: string | null = null;
+      41  
+     ...
+      58        addListener: vi.fn(),
+      59        removeListener: vi.fn(),
+      60        dispatchEvent: vi.fn(),
+      44 -    });                                                        
+      61 +    } as MediaQueryList);                                      
+      62  
+      63      let theme: string | null = null;
+      64  
+     ...
+      73    });
+      74  
+      75    it('should load theme from localStorage', async () => {
+      76 +    vi.spyOn(window, 'matchMedia').mockReturnValue({           
+      77 +      matches: false,                                          
+      78 +      media: '',                                               
+      79 +      addEventListener: vi.fn(),                               
+      80 +      removeEventListener: vi.fn(),                            
+      81 +      onchange: null,                                          
+      82 +      addListener: vi.fn(),                                    
+      83 +      removeListener: vi.fn(),                                 
+      84 +      dispatchEvent: vi.fn(),                                  
+      85 +    } as MediaQueryList);                                      
+      86 +                                                               
+      87      localStorage.setItem('theme', 'dark');
+      88  
+      89      let theme: string | null = null;
+     ...
+      108        addListener: vi.fn(),
+      109        removeListener: vi.fn(),
+      110        dispatchEvent: vi.fn(),
+       83 -    });                                                       
+      111 +    } as MediaQueryList);                                     
+      112  
+      113      let themeResult: { theme: string; toggleTheme: () => void 
+           } | null = null;
+      114  
+     ...
+      120  
+      121      await waitFor(() => themeResult?.theme === 'light');
+      122  
+       95 -    // Act                                                    
+      123      themeResult!.toggleTheme();
+      124  
+       98 -    // Assert                                                 
+      125      await waitFor(() => expect(themeResult?.theme).toBe('dark'
+           ));
+      126      expect(localStorage.getItem('theme')).toBe('dark');
+      127      expect(document.documentElement.classList.contains('dark')
+           ).toBe(true);
+      128  
+      103 -    // Act again                                              
+      129      themeResult!.toggleTheme();
+      130  
+      106 -    // Assert again                                           
+      131      await waitFor(() => expect(themeResult?.theme).toBe('light
+           '));
+      132      expect(localStorage.getItem('theme')).toBe('light');
+      133      expect(document.documentElement.classList.contains('dark')
+           ).toBe(false);
+
+⏺ Bash(bun test src/shared/contexts/ThemeContext.test.tsx 2>&1)
+  ⎿  Error: Exit code 1
+     bun test v1.2.21 (7c45ed97)
+
+     src/shared/contexts/ThemeContext.test.tsx:
+     20 | Object.defineProperty(global, 'localStorage', { value: 
+     localStorageMock });
+     21 | 
+     22 | describe('ThemeContext', () => {
+     23 |   beforeEach(() => {
+     24 |     localStorage.clear();
+     25 |     document.documentElement.classList.remove('dark');
+     … +42 lines (ctrl+o to see all)
+
+⏺ Necesito mockear document también. Déjame verificar cómo otros tests en el
+  proyecto manejan esto:
+
+⏺ Read 1 file (ctrl+o to expand)
+
+⏺ Esos tests no usan DOM. Necesito verificar si hay un setup de tests:
+
+⏺ Searched for 2 patterns, read 3 files (ctrl+o to expand)
+
+⏺ Necesito configurar vitest con jsdom. Déjame crear la config:
+
+⏺ Write(frontend/vitest.config.ts)
+  ⎿  Wrote 17 lines to frontend/vitest.config.ts
+       1 import react from "@vitejs/plugin-react";
+       2 import { defineConfig } from "vitest/config";
+       3 
+       4 export default defineConfig({
+       5   plugins: [react()],
+       6   resolve: {
+       7     alias: {
+       8       "@": "/src",
+       9     },
+      10   },
+     … +7 lines (ctrl+o to expand)
+
+⏺ Bash(bun test src/shared/contexts/ThemeContext.test.tsx 2>&1)
+  ⎿  Error: Exit code 1
+     bun test v1.2.21 (7c45ed97)
+
+     src/shared/contexts/ThemeContext.test.tsx:
+     20 | Object.defineProperty(global, 'localStorage', { value: 
+     localStorageMock });
+     21 | 
+     22 | describe('ThemeContext', () => {
+     23 |   beforeEach(() => {
+     24 |     localStorage.clear();
+     25 |     document.documentElement.classList.remove('dark');
+     … +42 lines (ctrl+o to see all)
+
+⏺ Parece que jsdom no se está cargando. Déjame verificar si vitest está usando
+  la config:
+
+⏺ Bash(bun test --reporter=verbose 2>&1 | head -30)
+  ⎿  error: unrecognized reporter format: 'verbose'. Currently, only 'junit
+     ' is supported
+
+⏺ Bash(cat <<'EOF' | bun
+      import { configDefaults, defineConfig } from 'vitest/config';…)
+  ⎿  Bun is a fast JavaScript runtime, package manager, bundler, and test r
+     unner. (1.2.21+7c45ed97d)
+     … +25 lines (ctrl+o to expand)
+
+⏺ El problema es que bun test usa el runner de Bun, no Vitest. Necesito usar
+  vitest directamente:
+
+⏺ Bash(bunx vitest run src/shared/contexts/ThemeContext.test.tsx 2>&1)
+  ⎿  Error: Exit code 1
+
+      RUN  v4.0.18 /Users/nicolasmanayolivera/Desktop/Nico/projects/frontend-int
+     erview/frontend
+
+      ❯ src/shared/contexts/ThemeContext.test.tsx (4 tests | 4 failed) 4ms
+          × should use light theme by default when no preference 2ms
+          × should use system dark preference when no localStorage 0ms
+          × should load theme from localStorage 0ms
+          × should toggle theme and persist to localStorage 0ms
+
+     … +55 lines (ctrl+o to see all)
+
+⏺ Ahora jsdom funciona pero matchMedia no existe. Necesito mockearlo diferente:
+
+⏺ Update(frontend/src/shared/contexts/ThemeContext.test.tsx)
+  ⎿  Error editing file
+
+⏺ Write(frontend/src/shared/contexts/ThemeContext.test.tsx)
+  ⎿  Added 28 lines, removed 44 lines
+      19  
+      20  Object.defineProperty(global, 'localStorage', { value: localSto
+          rageMock });
+      21  
+      22 +Object.defineProperty(window, 'matchMedia', {                  
+      23 +  writable: true,                                              
+      24 +  value: (query: string) => ({                                 
+      25 +    matches: false,                                            
+      26 +    media: query,                                              
+      27 +    addEventListener: () => {},                                
+      28 +    removeEventListener: () => {},                             
+      29 +    onchange: null,                                            
+      30 +    addListener: () => {},                                     
+      31 +    removeListener: () => {},                                  
+      32 +    dispatchEvent: () => {},                                   
+      33 +  }),                                                          
+      34 +});                                                            
+      35 +                                                               
+      36  describe('ThemeContext', () => {
+      37    beforeEach(() => {
+      38      localStorage.clear();
+     ...
+      40    });
+      41  
+      42    it('should use light theme by default when no preference', as
+          ync () => {
+      29 -    vi.spyOn(window, 'matchMedia').mockReturnValue({           
+      30 -      matches: false,                                          
+      31 -      media: '',                                               
+      32 -      addEventListener: vi.fn(),                               
+      33 -      removeEventListener: vi.fn(),                            
+      34 -      onchange: null,                                          
+      35 -      addListener: vi.fn(),                                    
+      36 -      removeListener: vi.fn(),                                 
+      37 -      dispatchEvent: vi.fn(),                                  
+      38 -    } as MediaQueryList);                                      
+      39 -                                                               
+      43      let theme: string | null = null;
+      44  
+      45      render(
+     ...
+      52    });
+      53  
+      54    it('should use system dark preference when no localStorage', 
+          async () => {
+      52 -    vi.spyOn(window, 'matchMedia').mockReturnValue({           
+      53 -      matches: true,                                           
+      54 -      media: '',                                               
+      55 -      addEventListener: vi.fn(),                               
+      56 -      removeEventListener: vi.fn(),                            
+      57 -      onchange: null,                                          
+      58 -      addListener: vi.fn(),                                    
+      59 -      removeListener: vi.fn(),                                 
+      60 -      dispatchEvent: vi.fn(),                                  
+      61 -    } as MediaQueryList);                                      
+      55 +    Object.defineProperty(window, 'matchMedia', {              
+      56 +      writable: true,                                          
+      57 +      value: (query: string) => ({                             
+      58 +        matches: true,                                         
+      59 +        media: query,                                          
+      60 +        addEventListener: () => {},                            
+      61 +        removeEventListener: () => {},                         
+      62 +        onchange: null,                                        
+      63 +        addListener: () => {},                                 
+      64 +        removeListener: () => {},                              
+      65 +        dispatchEvent: () => {},                               
+      66 +      }),                                                      
+      67 +    });                                                        
+      68  
+      69      let theme: string | null = null;
+      70  
+     ...
+      75      );
+      76  
+      77      await waitFor(() => expect(theme).toBe('dark'));
+      72 -    await waitFor(() => expect(document.documentElement.classLi
+         -st.contains('dark')).toBe(true));                              
+      78 +    expect(document.documentElement.classList.contains('dark'))
+         +.toBe(true);                                                   
+      79    });
+      80  
+      81    it('should load theme from localStorage', async () => {
+      76 -    vi.spyOn(window, 'matchMedia').mockReturnValue({           
+      77 -      matches: false,                                          
+      78 -      media: '',                                               
+      79 -      addEventListener: vi.fn(),                               
+      80 -      removeEventListener: vi.fn(),                            
+      81 -      onchange: null,                                          
+      82 -      addListener: vi.fn(),                                    
+      83 -      removeListener: vi.fn(),                                 
+      84 -      dispatchEvent: vi.fn(),                                  
+      85 -    } as MediaQueryList);                                      
+      86 -                                                               
+      82      localStorage.setItem('theme', 'dark');
+      83  
+      84      let theme: string | null = null;
+     ...
+       94    });
+       95  
+       96    it('should toggle theme and persist to localStorage', async 
+           () => {
+      102 -    vi.spyOn(window, 'matchMedia').mockReturnValue({          
+      103 -      matches: false,                                         
+      104 -      media: '',                                              
+      105 -      addEventListener: vi.fn(),                              
+      106 -      removeEventListener: vi.fn(),                           
+      107 -      onchange: null,                                         
+      108 -      addListener: vi.fn(),                                   
+      109 -      removeListener: vi.fn(),                                
+      110 -      dispatchEvent: vi.fn(),                                 
+      111 -    } as MediaQueryList);                                     
+      112 -                                                              
+       97      let themeResult: { theme: string; toggleTheme: () => void 
+           } | null = null;
+       98  
+       99      render(
+
+⏺ Bash(bunx vitest run src/shared/contexts/ThemeContext.test.tsx 2>&1)
+  ⎿   RUN  v4.0.18 /Users/nicolasmanayolivera/Desktop/Nico/projects/fronten
+     d-interview/frontend
+     … +20 lines (ctrl+o to expand)
+
+⏺ 4 tests pasaron ✓
+
+  Los warnings de act(...) son solo informativos - los tests pasan. Podemos
+  limpiarlos envolviendo en act pero no es crítico.
+
+  Tests cubren:
+  1. Default light theme
+  2. System preference (prefers-color-scheme)
+  3. LocalStorage persistencia
+  4. Toggle + persistencia
+
+✻ Brewed for 1m 44s
+
+❯ para hacer un end to end test que libreria se usan? 
+
+⏺ No entiendo bien tu pregunta. ¿Te refieres a qué librería usar para hacer
+  tests end-to-end (E2E)?
+
+  Actualmente el proyecto usa:
+  - Vitest + @testing-library/react para unit tests
+  - jsdom para simular el DOM
+
+  Para E2E testing tendrías que agregar algo como:
+  - Playwright
+  - Cypress
+  - TestCafe
+
+  ¿Qué querés hacer exactamente? ¿Agregar tests E2E para el theme toggle?
+
+❯ ahora necesito que me ayudes con un par de cosas. necesito mejorar el     
+  readme con las desiciones tomadas librerias utilizadas etc. como me       
+  recomendas hacerlo                                                        
+
+⏺ Voy a explorar el README actual y el proyecto para entender qué documentar:
+
+⏺ Searched for 1 pattern, read 2 files (ctrl+o to expand)
+
+⏺ Perfecto, ya tengo toda la info. Déjame escribir un README mejorado:
+
+⏺ Updated plan
+  ⎿  /plan to preview
+  ⎿  User rejected Claude's plan:
+     ╭─────────────────────────────────────────────────────────────────────────╮
+     │ Plan: Mejorar README                                                    │
+     │                                                                         │
+     │ Contexto                                                                │
+     │                                                                         │
+     │ El README actual es muy básico y no documenta las librerías, decisiones │
+     │  técnicas y características implementadas. Necesita una mejora          │
+     │ completa.                                                               │
+     │                                                                         │
+     │ Nuevo README - Estructura propuesta                                     │
+     │                                                                         │
+     │ 1. Header                                                               │
+     │                                                                         │
+     │ - Título + descripción del proyecto                                     │
+     │ - Badges (tech stack, tests, license)                                   │
+     │ - Demo/screenshot                                                       │
+     │                                                                         │
+     │ 2. Sobre el proyecto                                                    │
+     │                                                                         │
+     │ - Qué es (Todo List App con CRUD completo)                              │
+     │ - Features principales                                                  │
+     │ - Arquitectura (Backend NestJS + Frontend React)                        │
+     │                                                                         │
+     │ 3. Tech Stack (Librerías utilizadas)                                    │
+     │                                                                         │
+     │ Backend                                                                 │
+     │                                                                         │
+     │ - NestJS (^10.0.0) - Framework Node.js                                  │
+     │ - Swagger (^7.4.2) - Documentación API                                  │
+     │ - Class Validator (^0.14.1) - Validación DTOs                           │
+     │ - Jest - Testing                                                        │
+     │                                                                         │
+     │ Frontend                                                                │
+     │                                                                         │
+     │ - React 19 (^19.2.4) - UI library                                       │
+     │ - Vite (^5.4.21) - Build tool                                           │
+     │ - TypeScript (^5.5.3) - Type safety                                     │
+     │ - TailwindCSS (^3.4.19) - Estilos + Dark mode                           │
+     │ - TanStack Query (^5.90.21) - Server state management                   │
+     │ - Axios (^1.13.5) - HTTP client                                         │
+     │ - @dnd-kit (^6.3.1) - Drag & drop                                       │
+     │ - Lucide React (^0.563.0) - Iconos                                      │
+     │ - Biome - Linter + Formatter                                            │
+     │                                                                         │
+     │ Testing                                                                 │
+     │                                                                         │
+     │ - Vitest - Unit tests frontend                                          │
+     │ - Testing Library - Component testing                                   │
+     │ - jsdom - DOM simulation                                                │
+     │                                                                         │
+     │ 4. Decisiones técnicas                                                  │
+     │                                                                         │
+     │ - TanStack Query sobre Redux/Context: Para server state (caching,       │
+     │ revalidación automática)                                                │
+     │ - @dnd-kit sobre react-dnd: Mejor performance, más ligero               │
+     │ - NestJS: Estructura enterprise-ready, TypeScript first-class           │
+     │ - Dark mode con class: Permite toggle manual + persistencia en          │
+     │ localStorage                                                            │
+     │ - Biome sobre ESLint/Prettier: Más rápido (Rust), todo en uno           │
+     │                                                                         │
+     │ 5. Features implementadas                                               │
+     │                                                                         │
+     │ - ✅ CRUD completo de Todo Lists                                        │
+     │ - ✅ CRUD completo de Todo Items                                        │
+     │ - ✅ Drag & drop para reordenar items                                   │
+     │ - ✅ Edición inline (nombre lista)                                      │
+     │ - ✅ Panel detalle para descripción                                     │
+     │ - ✅ Modales de confirmación                                            │
+     │ - ✅ Dark/Light theme toggle con persistencia                           │
+     │ - ✅ Responsive design                                                  │
+     │                                                                         │
+     │ 6. Instalación y uso                                                    │
+     │                                                                         │
+     │ # Reqs: Node.js 18+, pnpm/npm                                           │
+     │ pnpm install                                                            │
+     │ pnpm dev                                                                │
+     │                                                                         │
+     │ 7. Estructura del proyecto                                              │
+     │                                                                         │
+     │ ├── backend/          # NestJS API                                      │
+     │ │   └── src/                                                            │
+     │ │       ├── todo-lists/                                                 │
+     │ │       ├── todo-items/                                                 │
+     │ │       └── main.ts                                                     │
+     │ └── frontend/         # React Vite                                      │
+     │     └── src/                                                            │
+     │         ├── app/                                                        │
+     │         │   └── todo-lists/                                             │
+     │         ├── shared/                                                     │
+     │         │   ├── components/                                             │
+     │         │   ├── contexts/                                               │
+     │         │   └── hooks/                                                  │
+     │         └── main.tsx                                                    │
+     │                                                                         │
+     │ Archivo a modificar                                                     │
+     │                                                                         │
+     │ - /Users/nicolasmanayolivera/Desktop/Nico/projects/frontend-interview/R │
+     │ EADME.md                                                                │
+     │                                                                         │
+     │ Unresolved questions                                                    │
+     │                                                                         │
+     │ - Ninguna                                                               │
+     ╰─────────────────────────────────────────────────────────────────────────╯
